@@ -1,0 +1,1009 @@
+---
+title: "2021_report"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+```{r libraries}
+library(Matrix)
+library(Seurat)
+library(tidyverse)
+library(ggplot2)
+library(patchwork)
+library(gprofiler2)
+```
+
+
+# Functions for manipulating barcodes
+
+```{r}
+
+# get the stem of the barcode (i.e. exclude additional identifiers)
+get_stem <- function(bcs){ vapply(strsplit(bcs,"-"), `[`, 1, FUN.VALUE=character(1)) }
+
+# get barcodes whose sequence only occur once
+get_sngls <- function(bcs){
+  
+  bc_stem <- get_stem(bcs)
+  bc_counts <- table(bc_stem)
+  
+  return(bcs[bc_stem %in% names(bc_counts)[bc_counts==1]])
+}
+
+```
+
+
+# pilot 2019 data
+
+## QC for pilot19 data
+
+```{r}
+
+# read in expression data
+meta.list = list()
+gex.list = list()
+for (i in 1:6){
+
+  gex_name <- paste0("GEX", i)
+  # adt_name <- paste0("ADT", i)
+  
+  gex.data <- Read10X(data.dir = paste0("../pilot19/count/GEX", i))
+  # adt.data <- Read10X(data.dir = paste0("../pilot19/adt_count/ADT", i))
+  
+  meta.data <- read_csv(paste0("../pilot19/count/GEX", i, "/metrics_summary.csv"))
+  colnames(meta.data) <- make.names(colnames(meta.data))
+  
+  meta.list[[gex_name]] <- meta.data
+  
+  # meta.data <- read_csv(paste0("../pilot19/adt_count/ADT", i, "/metrics_summary.csv"))
+  # colnames(meta.data) <- make.names(colnames(meta.data))
+  # 
+  # meta.list[[adt_name]] <- meta.data
+  
+  gex <- CreateSeuratObject(
+    counts = gex.data,
+    project = gex_name,
+    min.cells=3,
+    min.features=200)
+  
+  # gex[["ADT"]] <- CreateAssayObject(adt.data)
+  
+  gex[["percent.mt"]] <- PercentageFeatureSet(gex, pattern = "^MT-")
+  
+  gex.list[[gex_name]] <- gex
+
+}
+
+
+# create ECDF plots of nFeature_RNA, nCount_RNA, and percent MT
+gex.ecdf.df = data.frame()
+for (i in 1:6){
+
+  gex_name <- paste0("GEX", i)
+  df.tmp <- rbind(data.frame(library = i,
+                             feature = "nFeature_RNA",
+                             value = gex.list[[gex_name]]$nFeature_RNA),
+                  data.frame(library = i,
+                             feature = "nCount_RNA",
+                             value = gex.list[[gex_name]]$nCount_RNA),
+                  data.frame(library = i,
+                             feature = "percent.mt",
+                             value = gex.list[[gex_name]]$percent.mt))
+  
+  gex.ecdf.df <- rbind(gex.ecdf.df, df.tmp)
+}
+
+gex.ecdf.df %>%
+  mutate(library = factor(library)) %>%
+  ggplot(aes(x=library, y=value, fill=library)) +
+  geom_violin() +
+  theme_classic(base_size=15) +
+  facet_wrap(~ feature, scales="free_y")
+
+```
+
+
+## Read in pilot19 data
+
+```{r data}
+
+# code adapted from https://satijalab.org/seurat/v3.1/pbmc3k_tutorial.html
+
+# Load the PBMC dataset
+# load the hto info
+gex.list = list()
+hto1.data <- Read10X('../pilot19/citeseqcount/HTO1/umi_count/', gene.column=1)
+hto1.data <- hto1.data[!(rownames(hto1.data)=="unmapped"),] # remove unmapped counts
+for (i in 1:3){
+
+  gex.data <- Read10X(data.dir = paste0("../pilot19/count/GEX", i))
+  # remove well info
+  colnames(gex.data) <- get_stem(colnames(gex.data))
+  
+  gex.data <- gex.data[, colnames(gex.data) %in% colnames(hto1.data)]
+  hto.data <- hto1.data[, colnames(hto1.data) %in% colnames(gex.data)]
+  
+  gex <- CreateSeuratObject(gex.data, project=paste0("L", i))
+  hto <- CreateAssayObject(hto.data)
+  gex[["HTO"]] <- hto
+  
+  gex <- NormalizeData(gex, assay = "HTO", normalization.method = "CLR")
+
+  # gex <- HTODemux(gex, assay = "HTO", positive.quantile = 0.99)
+  gex <- MULTIseqDemux(gex, assay = "HTO", autoThresh = T)
+  x = as.character(gex$MULTI_ID)
+  gex$MULTI_ID.global <- ifelse(x %in% c("Doublet","Negative"), x, "Singlet")
+  
+  Idents(gex) <- "HTO_classification.global"  
+  
+  # gex$orig.ident <- paste0("GEX", i)
+  
+  gex.list[[i]] <- gex
+}
+
+# gex1 <- merge(merge(gex.list[[1]],
+#                    gex.list[[2]],
+#                    add.cell.ids = c("GEX1", "GEX2")),
+#              gex.list[[3]], add.cell.ids = c("", "GEX3"))
+
+
+
+# repeat the above for libraries 4-6
+hto2.data <- Read10X('../pilot19/citeseqcount/HTO2/umi_count/', gene.column=1)
+hto2.data <- hto2.data[!(rownames(hto1.data)=="unmapped"),] # remove unmapped counts
+for (i in 4:6){
+
+  gex.data <- Read10X(data.dir = paste0("../pilot19/count/GEX", i))
+  # remove well info
+  colnames(gex.data) <- get_stem(colnames(gex.data))
+  
+  gex.data <- gex.data[, colnames(gex.data) %in% colnames(hto2.data)]
+  hto.data <- hto2.data[, colnames(hto2.data) %in% colnames(gex.data)]
+  
+  gex <- CreateSeuratObject(gex.data, project=paste0("L", i))
+  hto <- CreateAssayObject(hto.data)
+  gex[["HTO"]] <- hto
+  
+  DefaultAssay(gex) <- "HTO"
+  
+  hto_counts = colSums(gex)
+  
+  gex <- NormalizeData(gex, assay = "HTO", normalization.method = "CLR")
+
+  # gex <- HTODemux(gex, assay = "HTO", positive.quantile = 0.99)
+  gex <- MULTIseqDemux(gex, assay = "HTO", autoThresh = T)
+  x = as.character(gex$MULTI_ID)
+  gex$MULTI_ID.global <- ifelse(x %in% c("Doublet","Negative"), x, "Singlet")
+  
+  Idents(gex) <- "HTO_classification.global"
+  
+  # gex$orig.ident <- paste0("GEX", i)
+  
+  gex.list[[i]] <- gex
+}
+
+gex.pilot19 <- Reduce(merge, gex.list)
+
+# get singlets
+Idents(gex.pilot19) <- "MULTI_ID.global"
+gex.19.singlet <- subset(gex.pilot19, idents = "Singlet")
+
+```
+
+
+## QC
+
+```{r}
+
+Idents(gex.19.singlet) <- "MULTI_ID.global"
+gex.19.singlet[["percent.mt"]] = PercentageFeatureSet(gex.19.singlet, pattern = "^MT-")
+VlnPlot(gex.19.singlet, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
+
+
+gex.19.singlet = subset(gex.19.singlet, subset = nFeature_RNA > 200 & nFeature_RNA < 2500 & percent.mt < 5)
+
+
+# # visualize UMI with global classification
+# 
+# VlnPlot(gex, features = "nCount_RNA", pt.size = 0.01, log = TRUE)
+# 
+# 
+# HTOHeatmap(gex, assay = "HTO", ncells = 5000)
+
+
+# add sample and stim information
+samp_stim = data.frame(samp_stim=gex.19.singlet$MULTI_ID) %>%
+  separate(samp_stim, into=c("sample","stim","bc"), sep="-") %>%
+  mutate(stim = ifelse(stim=="IFNBa", "IFNB", stim))
+
+gex.19.singlet$sample = samp_stim$sample
+gex.19.singlet$stim = samp_stim$stim
+
+
+```
+
+
+## Run dimensionality reduction
+
+```{r}
+
+set.seed(42)
+
+# set identity for stim
+Idents(gex.19.singlet) <- "stim"
+
+# SCTransform
+gex.19.singlet <- SCTransform (gex.19.singlet, verbose = F)
+
+# run PCA
+gex.19.singlet = RunPCA(gex.19.singlet, features = VariableFeatures(object = gex.19.singlet), npcs=100)
+
+DimPlot(gex.19.singlet, reduction = "pca", group.by = "sample")
+# DimPlot(gex.19.singlet, reduction = "pca", group.by = "orig.ident")
+
+ElbowPlot(gex.19.singlet, ndims = 50)
+
+# cluster data
+gex.19.singlet = Find
+gex.19.singlet = FindClusters(gex.19.singlet, resolution = 0.3)
+
+# run UMAP
+gex.19.singlet = RunUMAP(gex.19.singlet, dims = 1:30)
+#gex.19.singlet = RunTSNE(gex.19.singlet, dimms=1:30)
+
+DimPlot(gex.19.singlet, reduction = "umap")
+# DimPlot(gex.19.singlet, reduction = "umap", group.by = "orig.ident")
+DimPlot(gex.19.singlet, reduction = "umap", group.by = "sample")
+DimPlot(gex.19.singlet, reduction = "umap", group.by = "stim")
+DimPlot(gex.19.singlet, reduction = "umap", group.by = "orig.ident")
+
+```
+
+
+## Get cluster markers
+
+```{r}
+
+gex.19.markers <- FindAllMarkers(gex.19.singlet, only.pos = TRUE, min.pct = 0.25, logfc.threshold = 0.25)
+
+top5 <- gex.19.markers %>% group_by(cluster) %>% top_n(n = 5, wt = avg_log2FC)
+
+cells_subset = data.frame(cell = colnames(gex.19.singlet), clust = gex.19.singlet$seurat_clusters) %>%
+  group_by(clust) %>%
+  sample_n(100) %>%
+  pull(cell)
+
+DoHeatmap(gex.19.singlet, features = top5$gene, cells = cells_subset) + NoLegend()
+
+```
+
+
+## Feature plot
+
+```{r}
+
+FeaturePlot(gex.19.singlet, features = c("CD14", "FCGR3A", "CD1C", "SERPINF1", "PRSS57", "CD40LG", "KLRB1", "BANK1", "MZB1"))
+
+
+jimmie.markers = c("CD14","S100A9","CTSS","FCGR3A", "CDKN1C", "FCER1A", "CD1C", "HLA-DQA1", "JCHAIN", "PLD4", "SERPINF1", "LILRA4", "PRSS57", "SOX4", "STMN1", "TOP2A", "CD3E", "CD3A", "CD38", "CD40LG", "CCR7", "IL7R", "RTKN2", "FOXP3", "PRF1", "GZMH", "GZMB", "GZMK", "KLRB1", "GNLY", "NKG7", "CD79A", "MZB1", "IGLL5", "BANK1", "CD19", "MS4A1")
+
+Idents(gex.19.singlet) <- "seurat_clusters"
+DoHeatmap(gex.19.singlet, cells = cells_subset, features = jimmie.markers) + NoLegend()
+
+monocyte = c(4,7)
+bcell = c(5,9)
+nktcell = c(0,1,2,3,6,8,10,11,12)
+dc = 13
+
+gex.19.ctypes = rep("", 14)
+gex.19.ctypes[monocyte+1] = "monocyte"
+gex.19.ctypes[bcell+1] = "bcell"
+gex.19.ctypes[nktcell+1] = "nk/tcell"
+gex.19.ctypes[dc+1] = "dc"
+
+gex.19.singlet$ctypes <- gex.19.ctypes[as.numeric(gex.19.singlet$seurat_clusters)]
+
+data.frame(sample = gex.19.singlet$sample,
+           ctype = gex.19.singlet$ctypes) %>%
+  ggplot(aes(x=ctype, fill=sample)) +
+  geom_bar(position="dodge") +
+  theme_classic(base_size=15)
+
+data.frame(sample = gex.19.singlet$sample,
+           ctype = gex.19.singlet$ctypes) %>%
+  ggplot(aes(x=sample, fill=ctype)) +
+  geom_bar(position="fill") +
+  theme_classic(base_size=15)
+
+```
+
+
+## DE-genes amonng monocytes (clusters 4 and 7)
+
+```{r}
+
+gex.19.mono = subset(gex.19.singlet, subset = seurat_clusters %in% c(4,7))
+
+Idents(gex.19.mono) <- "stim"
+
+gex.19.lps_mono_de = FindMarkers(object = gex.19.mono,
+                                 ident.1 = "LPS",
+                                 ident.2 = "NS",
+                                 logfc.threshold = 0,
+                                 test.use = "DESeq2")
+
+```
+
+
+
+# 2021 Pilot
+
+## 2021 Pilot QC
+
+```{r}
+
+# read in expression data
+meta.list = list()
+gex.list = list()
+for (i in 1:3){
+
+  gex_name <- paste0("GEX", i)
+  
+  gex.data <- Read10X(data.dir = paste0("../pilot21/count/tishkoff_pilot21_L",
+                                  i, "/outs/filtered_feature_bc_matrix"))
+  
+  meta.data <- read_csv(paste0("../pilot21/count/tishkoff_pilot21_L",
+                               i, "/outs/metrics_summary.csv"))
+  colnames(meta.data) <- make.names(colnames(meta.data))
+  
+  meta.list[[gex_name]] <- meta.data
+  
+  gex <- CreateSeuratObject(
+    counts = gex.data,
+    project = gex_name,
+    min.cells=3,
+    min.features=200)
+  
+  gex[["percent.mt"]] <- PercentageFeatureSet(gex, pattern = "^MT-")
+  
+  gex.list[[gex_name]] <- gex
+
+}
+
+
+# create ECDF plots of nFeature_RNA, nCount_RNA, and percent MT
+gex.ecdf.df = data.frame()
+for (i in 1:3){
+
+  gex_name <- paste0("GEX", i)
+  df.tmp <- rbind(data.frame(library = i,
+                             feature = "nFeature_RNA",
+                             value = gex.list[[gex_name]]$nFeature_RNA),
+                  data.frame(library = i,
+                             feature = "nCount_RNA",
+                             value = gex.list[[gex_name]]$nCount_RNA),
+                  data.frame(library = i,
+                             feature = "percent.mt",
+                             value = gex.list[[gex_name]]$percent.mt))
+  
+  gex.ecdf.df <- rbind(gex.ecdf.df, df.tmp)
+}
+
+gex.ecdf.df %>%
+  mutate(library = factor(library)) %>%
+  ggplot(aes(x=library, y=value, fill=library)) +
+  geom_violin() +
+  theme_classic(base_size=15) +
+  facet_wrap(~ feature, scales="free_y")
+
+```
+
+
+## Read in pilot 2021 data
+
+```{r data}
+
+# code adapted from https://satijalab.org/seurat/v3.1/pbmc3k_tutorial.html
+
+# Load the PBMC dataset
+# load the hto info
+gex.list = list()
+for (i in 1:3){
+
+  gex.data <- Read10X(data.dir = paste0("../pilot21/count/tishkoff_pilot21_L", i, "/outs/filtered_feature_bc_matrix"))
+  # remove well info
+  colnames(gex.data) <- get_stem(colnames(gex.data))
+  
+  hto.data <- Read10X(data.dir = paste0("../pilot21/citeseqcount/D70", i, "/umi_count"), gene.column=1)
+  # remove unmapped
+  hto.data <- hto.data[!(rownames(hto.data)=="unmapped"),]
+  # rename columns to include the lane
+  colnames(hto.data) <- get_stem(colnames(hto.data))
+  
+  gex.data <- gex.data[, colnames(gex.data) %in% colnames(hto.data)]
+  hto.data <- hto.data[, colnames(hto.data) %in% colnames(gex.data)]
+  
+  gex <- CreateSeuratObject(gex.data, project=paste0("L", i))
+  hto <- CreateAssayObject(hto.data)
+  gex[["HTO"]] <- hto
+  
+  gex <- NormalizeData(gex, assay = "HTO", normalization.method = "CLR")
+
+  gex <- HTODemux(gex, assay = "HTO", positive.quantile = 0.99)
+  # gex <- MULTIseqDemux(gex, assay = "HTO", autoThresh = T)
+  # x = as.character(gex$MULTI_ID)
+  # gex$MULTI_ID.global <- ifelse(x %in% c("Doublet","Negative"), x, "Singlet")
+  
+  Idents(gex) <- "HTO_classification.global"
+  
+  gex.list[[i]] <- gex
+}
+
+gex.pilot21 <- Reduce(merge, gex.list)
+
+# merge(merge(gex.list[[1]],
+#                    gex.list[[2]],
+#                    add.cell.ids = c("L1", "L2")),
+#              gex.list[[3]], add.cell.ids = c("", "L3"))
+
+
+
+
+# # visualize UMI with global classification
+# Idents(gex) <- "HTO_classification.global"
+# VlnPlot(gex, features = "nCount_RNA", pt.size = 0.01, log = TRUE)
+# 
+# 
+# HTOHeatmap(gex, assay = "HTO", ncells = 5000)
+# 
+
+# add sample and stim information
+samp_stim = data.frame(HTO_maxID=gex.pilot21$HTO_maxID) %>% 
+  separate(HTO_maxID, into=c("sample","stim","bc"), sep="-")
+
+gex.pilot21$sample = samp_stim$sample
+gex.pilot21$stim = samp_stim$stim
+
+
+# get singlets
+gex.21.singlet <- subset(gex.pilot21, idents = "Singlet")
+
+Idents(gex.21.singlet) <- "MULTI_ID.global"
+gex.21.singlet[["percent.mt"]] = PercentageFeatureSet(gex.21.singlet, pattern = "^MT-")
+gex.21.singlet = subset(gex.21.singlet, subset = nFeature_RNA > 200 & nFeature_RNA < 2500 & percent.mt < 5)
+
+# remove uncultured cells
+Idents(gex.21.cult) <- "stim"
+gex.21.cult <- subset(gex.21.singlet, idents = "unculture", invert = T)
+
+```
+
+
+## Run dimensionality reduction
+
+```{r}
+
+set.seed(42)
+
+# set identity for stim
+Idents(gex.21.cult) <- "stim"
+
+# SCTransform
+gex.21.cult <- SCTransform (gex.21.cult, verbose = F)
+
+# run PCA
+gex.21.cult = RunPCA(gex.21.cult, features = VariableFeatures(object = gex.21.cult), npcs=100)
+
+DimPlot(gex.21.cult, reduction = "pca", group.by = "sample")
+# DimPlot(gex.21.cult, reduction = "pca", group.by = "orig.ident")
+
+ElbowPlot(gex.21.cult, ndims = 50)
+
+# cluster data
+gex.21.cult = FindNeighbors(gex.21.cult, dims = 1:30)
+gex.21.cult = FindClusters(gex.21.cult, resolution = 0.3)
+
+# run UMAP
+gex.21.cult = RunUMAP(gex.21.cult, dims = 1:30)
+#gex.21.cult = RunTSNE(gex.21.cult, dimms=1:30)
+
+DimPlot(gex.21.cult, reduction = "umap")
+# DimPlot(gex.21.cult, reduction = "umap", group.by = "orig.ident")
+DimPlot(gex.21.cult, reduction = "umap", group.by = "sample")
+DimPlot(gex.21.cult, reduction = "umap", group.by = "stim") + ggtitle("2021 scRNA-seq pilot")
+DimPlot(gex.21.cult, reduction = "umap", group.by = "orig.ident")
+
+```
+
+
+## DE-genes amonng monocytes (clusters 3 and 4)
+
+```{r}
+
+gex.21.mono = subset(gex.21.cult, subset = seurat_clusters %in% c(3,4))
+
+Idents(gex.21.mono) <- "stim"
+
+gex.21.lps_mono_de = FindMarkers(object = gex.21.mono,
+                                 ident.1 = "LPS",
+                                 ident.2 = "Ctrl",
+                                 logfc.threshold = 0,
+                                 test.use = "DESeq2")
+
+```
+
+
+## Compare DE monocyte genes
+
+```{r}
+
+monocyte_de.df = gex.21.lps_mono_de %>%
+  rownames_to_column("gene") %>%
+  select(gene, avg_log2FC_21 = avg_log2FC) %>%
+  merge(gex.19.lps_mono_de %>%
+          rownames_to_column("gene") %>%
+          select(gene, avg_log2FC_19 = avg_log2FC))
+
+
+ggplot(monocyte_de.df, aes(x=avg_log2FC_19 , y=avg_log2FC_21)) +
+  geom_point(alpha = 0.5) +
+  geom_abline(yintercept=0, slope=1, linetype="dashed", color="red") +
+  geom_smooth(method='lm', formula= y~x, linetype = "dashed") +
+  geom_text_repel(data = monocyte_de.df %>%
+                    filter(avg_log2FC_21 > 1 | avg_log2FC_19 > 2.5), aes(label = gene)) +
+  theme_bw(base_size=15) +
+  ggtitle("Comparison of LPS fold changes in monocytes")
+
+```
+
+
+## cell types
+
+```{r}
+
+jimmie.markers = c("CD14","S100A9","CTSS","FCGR3A", "CDKN1C", "FCER1A", "CD1C", "HLA-DQA1", "JCHAIN", "PLD4", "SERPINF1", "LILRA4", "PRSS57", "SOX4", "STMN1", "TOP2A", "CD3E", "CD3A", "CD38", "CD40LG", "CCR7", "IL7R", "RTKN2", "FOXP3", "PRF1", "GZMH", "GZMB", "GZMK", "KLRB1", "GNLY", "NKG7", "CD79A", "MZB1", "IGLL5", "BANK1", "CD19", "MS4A1")
+
+cells_subset = data.frame(cell = colnames(gex.21.cult), clust = gex.21.cult$seurat_clusters) %>%
+  group_by(clust) %>%
+  sample_n(40) %>%
+  pull(cell)
+
+Idents(gex.21.cult) <- "seurat_clusters"
+DoHeatmap(gex.21.cult, cells = cells_subset, features = jimmie.markers) + NoLegend()
+
+monocytes = c(3,4)
+bcell = 1
+nktcell = c(0,2,5)
+prolif = 6
+
+gex.21.ctypes = rep("", 7)
+gex.21.ctypes[myeloid+1] = "monocyte"
+gex.21.ctypes[bcell+1] = "bcell"
+gex.21.ctypes[nktcell+1] = "nk/tcell"
+gex.21.ctypes[prolif+1] = "prolif"
+
+gex.21.cult$ctypes <- gex.21.ctypes[as.numeric(gex.21.cult$seurat_clusters)]
+
+data.frame(sample = gex.21.cult$sample,
+           ctype = gex.21.cult$ctypes) %>%
+  ggplot(aes(x=ctype, fill=sample)) +
+  geom_bar(position="dodge") +
+  theme_classic(base_size=15)
+
+data.frame(sample = gex.21.cult$sample,
+           ctype = gex.21.cult$ctypes) %>%
+  ggplot(aes(x=sample, fill=ctype)) +
+  geom_bar(position="fill") +
+  theme_classic(base_size=15)
+
+```
+
+
+# all analysis
+
+## Combine the pilot data
+
+```{r}
+
+gex.19.singlet$pilot <- "2019"
+gex.21.cult$pilot <- "2021"
+
+# merge
+gex.all = merge(gex.19.singlet, gex.21.cult)
+gex.all$stim[gex.all$stim=="NS"] <- "Ctrl"
+
+## dimensionality reduction
+set.seed(42)
+
+# set identity for stim
+Idents(gex.all) <- "stim"
+
+# SCTransform
+gex.all <- SCTransform (gex.all, verbose = F)
+
+# run PCA
+gex.all = RunPCA(gex.all, features = VariableFeatures(object = gex.all), npcs=100)
+
+DimPlot(gex.all, reduction = "pca", group.by = "pilot")
+# DimPlot(gex.all, reduction = "pca", group.by = "orig.ident")
+
+ElbowPlot(gex.all, ndims = 50)
+
+# cluster data
+gex.all = FindNeighbors(gex.all, dims = 1:30)
+gex.all = FindClusters(gex.all, resolution = 0.3)
+
+# run UMAP
+gex.all = RunUMAP(gex.all, dims = 1:30)
+#gex.all = RunTSNE(gex.all, dimms=1:30)
+
+DimPlot(gex.all, reduction = "umap")
+# DimPlot(gex.all, reduction = "umap", group.by = "orig.ident")
+DimPlot(gex.all, reduction = "umap", group.by = "sample")
+DimPlot(gex.all, shuffle = T, reduction = "umap", group.by = "pilot")
+DimPlot(gex.all, reduction = "umap", group.by = "stim")
+DimPlot(gex.all, reduction = "umap", group.by = "orig.ident")
+
+
+```
+
+
+## Integrate datasets
+
+```{r}
+
+gex.19.singlet <- NormalizeData(gex.19.singlet)
+gex.19.singlet <- FindVariableFeatures(gex.19.singlet, selection.method = "vst", nfeatures = 2000)
+
+gex.21.cult <- NormalizeData(gex.21.cult)
+gex.21.cult <- FindVariableFeatures(gex.21.cult, selection.method = "vst", nfeatures = 2000)
+
+gex.features <- SelectIntegrationFeatures(object.list = list(gex.19.singlet, gex.21.cult))
+
+immune.anchors <- FindIntegrationAnchors(object.list = list(gex.19.singlet, gex.21.cult), anchor.features = gex.features)
+
+gex.combined <- IntegrateData(anchorset = immune.anchors)
+
+```
+
+
+## dimensionality reduction on integrated data
+
+```{r}
+
+DefaultAssay(gex.combined) <- "integrated"
+
+set.seed(42)
+
+# SCTransform
+gex.combined <- SCTransform (gex.combined, verbose = F)
+
+# run PCA
+gex.combined = RunPCA(gex.combined, features = VariableFeatures(object = gex.combined), npcs=100)
+
+DimPlot(gex.combined, reduction = "pca", group.by = "sample")
+# DimPlot(gex.combined, reduction = "pca", group.by = "orig.ident")
+
+ElbowPlot(gex.combined, ndims = 50)
+
+# cluster data
+gex.combined = FindNeighbors(gex.combined, dims = 1:30)
+gex.combined = FindClusters(gex.combined, resolution = 0.3)
+
+# run UMAP
+gex.combined = RunUMAP(gex.combined, dims = 1:30)
+#gex.combined = RunTSNE(gex.combined, dimms=1:30)
+
+DimPlot(gex.combined, reduction = "umap")
+# DimPlot(gex.combined, reduction = "umap", group.by = "orig.ident")
+DimPlot(gex.combined, reduction = "umap", group.by = "sample")
+DimPlot(gex.combined, reduction = "umap", group.by = "stim") + ggtitle("Combined pilots")
+DimPlot(gex.combined, reduction = "umap", group.by = "pilot") + ggtitle("Combined pilots")
+DimPlot(gex.combined, reduction = "umap", group.by = "orig.ident")
+
+```
+
+
+## Integrate Ctrl and LPS
+
+```{r}
+
+gex.19.singlet$stim[gex.19.singlet$stim=="NS"] <- "Ctrl"
+
+Idents(gex.19.singlet) <- "stim"
+gex.19.ctrl_lps <- subset(gex.19.singlet, subset = stim %in% c("Ctrl","LPS"))
+gex.19.ctrl_lps <- NormalizeData(gex.19.ctrl_lps)
+gex.19.ctrl_lps <- FindVariableFeatures(gex.19.ctrl_lps, selection.method = "vst", nfeatures = 2000)
+
+Idents(gex.21.cult) <- "stim"
+gex.21.ctrl_lps <- subset(gex.21.cult, subset = stim %in% c("Ctrl","LPS"))
+gex.21.ctrl_lps <- NormalizeData(gex.21.ctrl_lps)
+gex.21.ctrl_lps <- FindVariableFeatures(gex.21.ctrl_lps, selection.method = "vst", nfeatures = 2000)
+
+gex.features <- SelectIntegrationFeatures(object.list = list(gex.19.ctrl_lps, gex.21.ctrl_lps))
+
+immune.anchors <- FindIntegrationAnchors(object.list = list(gex.19.ctrl_lps, gex.21.ctrl_lps), anchor.features = gex.features)
+
+gex.ctrl_lps <- IntegrateData(anchorset = immune.anchors)
+
+```
+
+
+## dimensionality reduction on integrated Ctrl/LPS data
+
+```{r}
+
+DefaultAssay(gex.ctrl_lps) <- "integrated"
+
+set.seed(42)
+
+# SCTransform
+gex.ctrl_lps <- SCTransform (gex.ctrl_lps, verbose = F)
+
+# run PCA
+gex.ctrl_lps = RunPCA(gex.ctrl_lps, features = VariableFeatures(object = gex.ctrl_lps), npcs=100)
+
+DimPlot(gex.ctrl_lps, reduction = "pca", group.by = "sample")
+# DimPlot(gex.ctrl_lps, reduction = "pca", group.by = "orig.ident")
+
+ElbowPlot(gex.ctrl_lps, ndims = 50)
+
+# cluster data
+gex.ctrl_lps = FindNeighbors(gex.ctrl_lps, dims = 1:30)
+gex.ctrl_lps = FindClusters(gex.ctrl_lps, resolution = 0.3)
+
+# run UMAP
+gex.ctrl_lps = RunUMAP(gex.ctrl_lps, dims = 1:30)
+#gex.ctrl_lps = RunTSNE(gex.ctrl_lps, dimms=1:30)
+
+DimPlot(gex.ctrl_lps, reduction = "umap")
+# DimPlot(gex.ctrl_lps, reduction = "umap", group.by = "orig.ident")
+DimPlot(gex.ctrl_lps, reduction = "umap", group.by = "sample")
+DimPlot(gex.ctrl_lps, reduction = "umap", group.by = "stim") + ggtitle("Combined pilots")
+DimPlot(gex.ctrl_lps, reduction = "umap", group.by = "pilot") + ggtitle("Combined pilots")
+DimPlot(gex.ctrl_lps, reduction = "umap", group.by = "orig.ident")
+
+```
+
+
+## DE genes in monocytes between Ctrl samples
+
+```{r}
+
+
+gex.all.mono.ctrl = subset(gex.all.mono, subset = stim=="Ctrl")
+
+Idents(gex.all.mono.ctrl) <- "pilot"
+gex.all.mono.ctrl_de = FindMarkers(object = gex.all.mono.ctrl,
+                                   ident.1 = "2021",
+                                   ident.2 = "2019",
+                                   logfc.threshold = 0,
+                                   test.use = "DESeq2")
+
+gex.all.mono.ctrl_de <- gex.all.mono.ctrl_de %>%
+  rownames_to_column("gene")
+
+gex.all.mono.ctrl_de %>%
+  ggplot(aes(x=avg_log2FC, y=-log10(p_val_adj))) +
+  geom_point() +
+  geom_text_repel(data = gex.all.mono.ctrl_de %>%
+                    rownames_to_column("gene") %>%
+                    filter(avg_log2FC > 0 & -log10(p_val_adj) > 200),
+                  aes(label = gene)) + 
+  theme_classic()
+
+gex.all.mono.ctrl_de.go <- gost(query = gex.all.mono.ctrl_de$gene[gex.all.mono.ctrl_de$p_val_adj < 0.05],
+                                custom_bg = gex.all.mono.ctrl_de$gene)
+
+gex.all.mono.ctrl_de.go_gt21 <- gost(query = gex.all.mono.ctrl_de$gene[gex.all.mono.ctrl_de$p_val_adj < 0.05 &
+                                                                         gex.all.mono.ctrl_de$avg_log2FC > 0],
+                                custom_bg = gex.all.mono.ctrl_de$gene)
+
+
+       
+```
+
+
+## DE genes in monocytes
+
+```{r}
+
+gex.all.mono = subset(gex.all, subset = seurat_clusters %in% c(5,7,11))
+gex.all.mono.lps = subset(gex.all.mono, subset = stim=="LPS")
+gex.all.mono.ctrl = subset(gex.all.mono, subset = stim %in% c("NS","Ctrl"))
+
+Idents(gex.all.mono.lps) <- "pilot"
+Idents(gex.all.mono.ctrl) <- "pilot"
+
+gex.all.ctrl_pilot_de = FindMarkers(object = gex.all.mono.ctrl,
+                                    ident.1 = "2021",
+                                    ident.2 = "2019",
+                                    logfc.threshold = 0,
+                                    test.use = "DESeq2")
+
+gex.all.lps_pilot_de = FindMarkers(object = gex.all.mono.lps,
+                                   ident.1 = "2021",
+                                   ident.2 = "2019",
+                                   logfc.threshold = 0,
+                                   test.use = "DESeq2")
+
+gex.all.de.df = gex.all.ctrl_pilot_de %>%
+  rownames_to_column("gene") %>%
+  select(gene, avg_log2FC_ctrl = avg_log2FC) %>%
+  merge(gex.all.lps_pilot_de %>%
+          rownames_to_column("gene") %>%
+          select(gene, avg_log2FC_lps = avg_log2FC))
+
+ggplot(gex.all.de.df, aes(x=avg_log2FC_ctrl , y=avg_log2FC_lps)) +
+  geom_point(alpha = 0.5) +
+  geom_abline(yintercept=0, slope=1, linetype="dashed", color="red") +
+  geom_smooth(method='lm', formula= y~x, linetype = "dashed") +
+  # geom_text_repel(data = monocyte_de.df %>%
+  #                   filter(avg_log2FC_21 > 1 | avg_log2FC_19 > 2.5), aes(label = gene)) +
+  theme_bw(base_size=15)
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Read in pilot19 data
+
+```{r}
+
+# read in HTO data
+pbmc.hto1 <- Read10X('../pilot19/citeseqcount/HTO1/umi_count/', gene.column=1)
+pbmc.hto1 <- pbmc.hto1[!(rownames(pbmc.hto1)=="unmapped"),] # remove unmapped counts
+
+pbmc.hto2 <- Read10X('../pilot19/citeseqcount/HTO2/umi_count/', gene.column=1)
+pbmc.hto2 <- pbmc.hto2[!(rownames(pbmc.hto2)=="unmapped"),] # remove unmapped counts
+
+# read in gene expression data
+pbmc.umis <- Read10X('../pilot19/count/all/outs/filtered_feature_bc_matrix/', gene.column=1)
+  
+# read in antibody tag data
+pbmc.adts <- Read10X('../pilot19/adt_count/all/outs/filtered_feature_bc_matrix/', gene.column=1)
+
+# get unique barcodes for each modality
+hto.bc.sngl <- get_sngls(c(colnames(pbmc.hto1),
+                           colnames(pbmc.hto2)))
+
+umi.bc.sngl <- get_sngls(colnames(pbmc.umis))
+
+adt.bc.sngl <- get_sngls(colnames(pbmc.adts))
+
+# how many barcodes are unique and shared across modalities?
+uniq_bcs = intersect(intersect(hto.bc.sngl, get_stem(umi.bc.sngl)), get_stem(adt.bc.sngl))
+all_bcs  = union(union(hto.bc.sngl, get_stem(umi.bc.sngl)), get_stem(adt.bc.sngl))
+
+length(uniq_bcs) # number of unique BCs
+length(uniq_bcs)/length(all_bcs) # Jaccard
+
+```
+
+
+Get data with unique barcodes
+
+```{r}
+
+# filter each modality to include barcodes that only occur once
+pbmc.hto1.uniq <- CreateAssayObject(pbmc.hto1[,get_stem(colnames(pbmc.hto1)) %in% uniq_bcs])
+Key(pbmc.hto1.uniq) = "HTO"
+pbmc.hto2.uniq <- CreateAssayObject(pbmc.hto2[,get_stem(colnames(pbmc.hto2)) %in% uniq_bcs])
+Key(pbmc.hto2.uniq) = "HTO"
+
+pbmc.htos.uniq <- merge(pbmc.hto1.uniq, pbmc.hto2.uniq)
+
+pbmc.umis.uniq <- pbmc.umis[,get_stem(colnames(pbmc.umis)) %in% uniq_bcs]
+colnames(pbmc.umis.uniq) <- get_stem(colnames(pbmc.umis.uniq)) # remove well info
+
+pbmc.adts.uniq <- pbmc.adts[,get_stem(colnames(pbmc.adts)) %in% uniq_bcs]
+colnames(pbmc.adts.uniq) <- get_stem(colnames(pbmc.adts.uniq))
+
+# create a Seurat object including all modalities
+pbmc.uniq <- CreateSeuratObject(pbmc.umis.uniq)
+pbmc.uniq[["HTO"]] <- pbmc.htos.uniq
+pbmc.uniq[["ADT"]] <- CreateAssayObject(pbmc.adts.uniq)
+
+rm(pbmc.umis)
+rm(pbmc.umis.uniq)
+
+rm(pbmc.adts)
+rm(pbmc.adts.uniq)
+
+rm(pbmc.hto1)
+rm(pbmc.hto2)
+rm(pbmc.hto1.uniq)
+rm(pbmc.hto2.uniq)
+rm(pbmc.htos.uniq)
+
+```
+
+
+I now need to assign each cell to a condition.
+
+```{r}
+
+# normalize HTO data and demultiplex
+pbmc.uniq <- NormalizeData(pbmc.uniq, assay = "HTO", normalization.method = "CLR")
+# pbmc.uniq <- NormalizeData(pbmc.uniq, assay = "HTO")
+
+# look at the ratio of the top two 
+
+# test quantiles to minimize unmapped and doublets
+# doublets = lapply(ppoints(20), function(x) table(MULTIseqDemux(pbmc.uniq, assay = "HTO", quantile=x)$MULTI_ID))
+# pbmc.uniq <- MULTIseqDemux(pbmc.uniq, assay = "HTO", autoThresh = T)
+pbmc.uniq <- HTODemux(pbmc.uniq, init=28)
+
+x = as.character(pbmc.uniq$MULTI_ID)
+pbmc.uniq$MULTI_ID.global <- ifelse(x %in% c("Doublet","Negative"), x, "Singlet")
+Idents(pbmc.uniq) <- "MULTI_ID.global"
+# VlnPlot(pbmc.uniq, features = "nCount_RNA", pt.size = 0.1, log = TRUE)
+
+# # heatmap
+# HTOHeatmap(pbmc.uniq, assay="HTO",
+#            classification="MULTI_ID",
+#            global.classification="MULTI_ID.global")
+
+
+# retain singlets
+Idents(pbmc.uniq) <- "MULTI_ID.global"
+pbmc.uniq.singlet <- subset(pbmc.uniq, idents = "Singlet")
+
+```
+
+
+
+
+```{r}
+
+# create ECDF plots of nFeature_RNA, nCount_RNA, and percent MT
+pbmc.ecdf.df = data.frame()
+for (i in 1:3){
+
+  gex_name <- paste0("GEX", i)
+  df.tmp <- rbind(data.frame(lane = i,
+                             feature = "nFeature_RNA",
+                             value = gex.list[[gex_name]]$nFeature_RNA),
+                  data.frame(lane = i,
+                             feature = "nCount_RNA",
+                             value = gex.list[[gex_name]]$nCount_RNA),
+                  data.frame(lane = i,
+                             feature = "percent.mt",
+                             value = gex.list[[gex_name]]$percent.mt))
+  
+  gex.ecdf.df <- rbind(gex.ecdf.df, df.tmp)
+}
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

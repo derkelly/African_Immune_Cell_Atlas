@@ -1,0 +1,751 @@
+---
+title: "pilot analysis"
+author: "derkelly"
+date: "11/11/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(Matrix)
+library(Seurat)
+library(dplyr)
+```
+
+```{r}
+# code adapted from https://satijalab.org/seurat/v3.1/pbmc3k_tutorial.html
+
+gex1.dir = "count/GEX1/filtered_feature_bc_matrix/"
+
+# Load the PBMC dataset
+gex1.data = Read10X(data.dir = gex1.dir)
+# Initialize the Seurat object with the raw (non-normalized data).
+gex1 = CreateSeuratObject(counts = gex1.data, project = "pilot", min.cells = 3, min.features = 200)
+
+# calcualte percent mitochondrial reads
+gex1[["percent.mt"]] = PercentageFeatureSet(gex1, pattern = "^MT-")
+VlnPlot(gex1, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
+
+# retain cells with 500 < nFeature_RNA < 5000 and 
+FeatureScatter(gex1, feature1 = "nCount_RNA", feature2 = "nFeature_RNA") + geom_hline(yintercept=c(500,5000))
+
+ggplot(data.frame(percent.mt = gex1$percent.mt), aes(x=percent.mt)) + 
+  geom_histogram(bins=100) +
+  geom_vline(xintercept=12) +
+  theme_classic()
+
+# filter
+gex1 = subset(gex1, subset = nFeature_RNA > 500 & nFeature_RNA < 5000 & percent.mt < 12)
+
+# log normalize
+gex1 = NormalizeData(gex1, normalization.method = "LogNormalize", scale.factor = 10000)
+
+# find variable features
+gex1 = FindVariableFeatures(gex1, selection.method = "vst", nfeatures = 2000)
+
+# Identify the 10 most highly variable genes
+top10 = head(VariableFeatures(gex1), 10)
+
+# plot variable features with and without labels
+plot1 = VariableFeaturePlot(gex1)
+plot2 = LabelPoints(plot = plot1, points = top10, repel = TRUE)
+CombinePlots(plots = list(plot1, plot2))
+
+# scale data
+all.genes = rownames(gex1)
+gex1 = ScaleData(gex1, features = all.genes)
+
+# PCA
+gex1 = RunPCA(gex1, features = VariableFeatures(object = gex1), npcs=100)
+
+DimPlot(gex1, reduction = "pca")
+
+VizDimLoadings(gex1, dims = 1:2, reduction = "pca")
+
+gex1 = JackStraw(gex1, num.replicate = 100, dims=100)
+gex1 = ScoreJackStraw(gex1, dims = 1:100)
+
+JackStrawPlot(gex1, dims = 1:100)
+
+ElbowPlot(gex1)
+
+# cluster data
+gex1 = FindNeighbors(gex1, dims = 1:50)
+gex1 = FindClusters(gex1, resolution = 0.5)
+
+# run UMAP
+gex1 = RunUMAP(gex1, dims = 1:50)
+
+DimPlot(gex1, reduction = "umap")
+
+# find markers of cluster 1
+cluster1.markers = FindMarkers(gex1, ident.1 = 1, min.pct = 0.25)
+head(cluster1.markers, n = 20)
+
+```
+
+## UMI counts
+
+Code adapted from https://satijalab.org/seurat/v3.1/hashing_vignette.html
+
+Functions for manipulating barcodes
+
+```{r}
+
+# get the stem of the barcode (i.e. exclude additional identifiers)
+get_stem <- function(bcs){ vapply(strsplit(bcs,"-"), `[`, 1, FUN.VALUE=character(1)) }
+
+# get barcodes whose sequence only occur once
+get_sngls <- function(bcs){
+  
+  bc_stem <- get_stem(bcs)
+  bc_counts <- table(bc_stem)
+  
+  return(bcs[bc_stem %in% names(bc_counts)[bc_counts==1]])
+}
+
+```
+
+```{r}
+
+# read in HTO data
+pbmc.hto1 <- Read10X('citeseqcount/HTO1/umi_count/', gene.column=1)
+pbmc.hto1 <- pbmc.hto1[!(rownames(pbmc.hto1)=="unmapped"),] # remove unmapped counts
+
+pbmc.hto2 <- Read10X('citeseqcount/HTO2/umi_count/', gene.column=1)
+pbmc.hto2 <- pbmc.hto2[!(rownames(pbmc.hto2)=="unmapped"),] # remove unmapped counts
+
+# read in gene expression data
+pbmc.umis <- Read10X('count/all/outs/filtered_feature_bc_matrix/', gene.column=1)
+  
+# read in antibody tag data
+pbmc.adts <- Read10X('adt_count/all/outs/filtered_feature_bc_matrix/', gene.column=1)
+
+# get unique barcodes for each modality
+hto.bc.sngl <- get_sngls(c(colnames(pbmc.hto1),
+                           colnames(pbmc.hto2)))
+
+umi.bc.sngl <- get_sngls(colnames(pbmc.umis))
+
+adt.bc.sngl <- get_sngls(colnames(pbmc.adts))
+
+# how many barcodes are unique and shared across modalities?
+uniq_bcs = intersect(intersect(hto.bc.sngl, get_stem(umi.bc.sngl)), get_stem(adt.bc.sngl))
+all_bcs  = union(union(hto.bc.sngl, get_stem(umi.bc.sngl)), get_stem(adt.bc.sngl))
+
+length(uniq_bcs) # number of unique BCs
+length(uniq_bcs)/length(all_bcs) # Jaccard
+
+```
+
+```{r}
+
+# filter each modality to include barcodes that only occur once
+pbmc.hto1.uniq <- CreateAssayObject(pbmc.hto1[,get_stem(colnames(pbmc.hto1)) %in% uniq_bcs])
+Key(pbmc.hto1.uniq) = "HTO"
+pbmc.hto2.uniq <- CreateAssayObject(pbmc.hto2[,get_stem(colnames(pbmc.hto2)) %in% uniq_bcs])
+Key(pbmc.hto2.uniq) = "HTO"
+
+pbmc.htos.uniq <- merge(pbmc.hto1.uniq, pbmc.hto2.uniq)
+
+  pbmc.umis.uniq <- pbmc.umis[,get_stem(colnames(pbmc.umis)) %in% uniq_bcs]
+colnames(pbmc.umis.uniq) <- get_stem(colnames(pbmc.umis.uniq)) # remove well info
+
+pbmc.adts.uniq <- pbmc.adts[,get_stem(colnames(pbmc.adts)) %in% uniq_bcs]
+colnames(pbmc.adts.uniq) <- get_stem(colnames(pbmc.adts.uniq))
+
+# create a Seurat object including all modalities
+pbmc.uniq <- CreateSeuratObject(pbmc.umis.uniq)
+pbmc.uniq[["HTO"]] <- pbmc.htos.uniq
+pbmc.uniq[["ADT"]] <- CreateAssayObject(pbmc.adts.uniq)
+
+```
+
+I now need to assign each cell to a condition.
+
+```{r}
+
+# normalize HTO data and demultiplex
+pbmc.uniq <- NormalizeData(pbmc.uniq, assay = "HTO", normalization.method = "CLR")
+# pbmc.uniq <- NormalizeData(pbmc.uniq, assay = "HTO")
+
+# look at the ratio of the top two 
+
+# test quantiles to minimize unmapped and doublets
+# doublets = lapply(ppoints(20), function(x) table(MULTIseqDemux(pbmc.uniq, assay = "HTO", quantile=x)$MULTI_ID))
+pbmc.uniq <- MULTIseqDemux(pbmc.uniq, assay = "HTO", autoThresh = T)
+# pbmc.uniq <- HTODemux(pbmc.uniq, init=28)
+
+x = as.character(pbmc.uniq$MULTI_ID)
+pbmc.uniq$MULTI_ID.global <- ifelse(x %in% c("Doublet","Negative"), x, "Singlet")
+Idents(pbmc.uniq) <- "MULTI_ID.global"
+VlnPlot(pbmc.uniq, features = "nCount_RNA", pt.size = 0.1, log = TRUE)
+
+# heatmap
+HTOHeatmap(pbmc.uniq, assay="HTO",
+           classification="MULTI_ID",
+           global.classification="MULTI_ID.global")
+
+# ridge plot
+Idents(pbmc.uniq) <- "MULTI_ID"
+RidgePlot(pbmc.uniq, assay = "HTO", features = rownames(pbmc.uniq[["HTO"]])[1:2], ncol = 2)
+
+# compare doublet rate across 
+data.frame(table(pbmc.uniq$MULTI_classification), stringsAsFactors=F) %>%
+  mutate(Var1 = gsub("IFNBa", "IFNB", Var1)) %>%
+  separate(Var1, into=c("samp1","samp2"), sep="_") %>%
+  mutate(samp2 = ifelse(is.na(samp2), samp1, samp2)) %>%
+  separate(samp1, into=c("samp","cond","bc")) %>%
+  select(-bc) %>%
+  unite("samp1", c(samp, cond), sep="-") %>%
+  separate(samp2, into=c("samp","cond","bc")) %>%
+  select(-bc) %>%
+  unite("samp2", c(samp, cond), sep="-")
+
+```
+
+Analyze doublet rates across samples and conditions
+
+```{r}
+
+# get samples that are in pool 1 and pool 2
+pool1 = data.frame(samp = rownames(pbmc.hto1)) %>%
+  separate(samp, into=c("sample", "foo"), sep="-") %>%
+  mutate(sample = gsub("_", "-", sample)) %>%
+  pull(sample)
+
+pool2 = data.frame(samp = rownames(pbmc.hto2)) %>%
+  separate(samp, into=c("sample", "foo"), sep="-") %>%
+  mutate(sample = gsub("IFNBa", "IFNB", sample)) %>%
+  mutate(sample = gsub("_", "-", sample)) %>%
+  pull(sample)
+
+hto_doublets = data.frame(table(pbmc.uniq$MULTI_classification), stringsAsFactors=F) %>%
+  filter(!(Var1=="Negative")) %>%
+  mutate(Var1 = gsub("IFNBa", "IFNB", Var1)) %>%
+  separate(Var1, into=c("samp1","samp2"), sep="_") %>%
+  separate(samp1, into=c("samp","cond","bc")) %>%
+  select(-bc) %>%
+  unite("samp1", c(samp, cond), sep="-") %>%
+  separate(samp2, into=c("samp","cond","bc")) %>%
+  select(-bc) %>%
+  unite("samp2", c(samp, cond), sep="-") %>%
+  group_by(samp1, samp2) %>%
+  summarise(Freq = sum(Freq))
+
+hto_doublets.mat = hto_doublets %>%
+  filter(!(samp2=="NA-NA")) %>%
+  spread(key=samp2, value=Freq, fill=0) %>%
+  column_to_rownames("samp1") %>%
+  as.matrix
+
+heatmap(hto_doublets.mat, scale="none")
+heatmap(log10(hto_doublets.mat+1), scale="none")
+
+hto_samp_stim = hto_doublets %>%
+  group_by(samp1) %>%
+  mutate(total_count = sum(Freq)) %>%
+  filter(samp2=="NA-NA") %>%
+  mutate(Doublets = total_count - Freq) %>%
+  dplyr::rename(Sample_stim = samp1, Singlets = Freq) %>%
+  select(c(Sample_stim, Singlets, Doublets)) %>%
+  gather(key="Category", value="count", -Sample_stim) %>%
+  separate(Sample_stim, into=c("Sample","Stim"), sep="-", remove=F)
+
+# plot doublet rate across sample-stim combinations, separating by pool
+hto_samp_stim %>%
+  mutate(pool1 = ifelse(Sample_stim %in% pool1, "pool1", "pool2")) %>%
+  ggplot(., aes(x=Sample_stim, y=count, fill=Category)) +
+  geom_bar(position="stack", stat="identity") +
+  coord_flip() +
+  theme_classic(base_size=15) +
+  facet_grid(pool1 ~ ., scales="free_y")
+
+# plot doublet rate by sample
+hto_samp_stim %>%
+  group_by(Sample, Category) %>%
+  summarise(count = sum(count)) %>%
+  ggplot(., aes(x=Sample, y=count, fill=Category)) +
+  geom_bar(position="stack", stat="identity") +
+  theme_classic(base_size=15)
+
+# plot doublet rate by stim
+hto_samp_stim %>%
+  group_by(Stim, Category) %>%
+  summarise(count = sum(count)) %>%
+  ggplot(., aes(x=Stim, y=count, fill=Category)) +
+  geom_bar(position="stack", stat="identity") +
+  theme_classic(base_size=15)
+
+```
+
+Remove doublets
+
+```{r}
+
+# First, we will remove negative cells from the object, normalize, scale, and perform PCA
+pbmc.uniq.subset <- subset(pbmc.uniq, idents = "Negative", invert = TRUE)
+
+# remove doublets
+Idents(pbmc.uniq.subset) <- "MULTI_ID.global"
+pbmc.uniq.singlet <- subset(pbmc.uniq.subset, idents = "Singlet")
+
+```
+
+Add sample and condition information
+
+```{r}
+
+# add condition
+pbmc.uniq.singlet$condition <- data.frame(pbmc.uniq.singlet$MULTI_ID) %>% 
+  separate(pbmc.uniq.singlet.MULTI_ID, into=c("sample","condition","bc"), sep="-") %>%
+  mutate(condition = ifelse(condition=="IFNBa", "IFNB", condition)) %>% # I messed up and have two IFNB variables
+  pull(condition)
+
+# plot by sample
+pbmc.uniq.singlet$sample <- data.frame(pbmc.uniq.singlet$MULTI_ID) %>% 
+  separate(pbmc.uniq.singlet.MULTI_ID, into=c("sample","condition","bc"), sep="-") %>%
+  pull(sample)
+
+```
+
+Cluster using RNA
+
+```{r}
+
+DefaultAssay(pbmc.uniq.singlet) <- "RNA"
+
+pbmc.uniq.singlet <- NormalizeData(pbmc.uniq.singlet)
+pbmc.uniq.singlet <- ScaleData(pbmc.uniq.singlet)
+pbmc.uniq.singlet <- FindVariableFeatures(pbmc.uniq.singlet)
+pbmc.uniq.singlet <- RunPCA(pbmc.uniq.singlet, npcs=100, verbose=FALSE, approx=FALSE)
+
+ElbowPlot(pbmc.uniq.singlet, ndims = 50)
+
+# Calculate UMAP embeddings with a distance matrix
+pbmc.uniq.singlet <- RunUMAP(pbmc.uniq.singlet, reduction = "pca", dims = 1:25)
+DimPlot(pbmc.uniq.singlet, reduction="umap", split.by = "sample", group.by = "condition")
+
+```
+
+Cluster using ADT
+
+```{r}
+
+DefaultAssay(pbmc.uniq.singlet) <- "ADT"
+
+pbmc.uniq.singlet <- NormalizeData(pbmc.uniq.singlet, method = "CLR")
+pbmc.uniq.singlet <- ScaleData(pbmc.uniq.singlet)
+pbmc.uniq.singlet <- FindVariableFeatures(pbmc.uniq.singlet)
+pbmc.uniq.singlet <- RunPCA(pbmc.uniq.singlet, npcs=100, verbose=FALSE, approx=FALSE)
+
+ElbowPlot(pbmc.uniq.singlet, ndims = 50)
+
+# Calculate UMAP embeddings with a distance matrix
+pbmc.uniq.singlet <- RunUMAP(pbmc.uniq.singlet, reduction = "pca", dims = 1:12)
+DimPlot(pbmc.uniq.singlet, reduction="umap", split.by = "sample", group.by = "condition")
+
+pbmc.uniq.singlet <- FindNeighbors(pbmc.uniq.singlet, reduction = "pca", dims = 1:25)
+pbmc.uniq.singlet <- FindClusters(pbmc.uniq.singlet, resolution = 0.5)
+
+DimPlot(pbmc.uniq.singlet, reduction="umap")
+
+
+```
+
+
+
+```{r}
+
+# plot tSNE and UMAP by doublet status
+DimPlot(pbmc.uniq.subset, reduction="tsne", group.by="MULTI_ID.global")
+DimPlot(pbmc.uniq.subset, reduction="umap", group.by="MULTI_ID.global")
+
+# plot by sample
+Idents(pbmc.uniq.subset) <- "MULTI_ID"
+DimPlot(pbmc.uniq.subset, reduction="tsne")
+DimPlot(pbmc.uniq.subset, reduction="umap")
+
+# plot by condition or doublet
+Idents(pbmc.uniq.subset) <- data.frame(pbmc.uniq.subset$MULTI_ID) %>% 
+  separate(pbmc.uniq.subset.MULTI_ID, into=c("sample","condition","bc"), sep="-") %>%
+  mutate(condition = ifelse(is.na(condition), sample, condition)) %>%
+  mutate(condition = ifelse(condition=="IFNBa", "IFNB", condition)) %>%
+  pull(condition)
+DimPlot(pbmc.uniq.subset, reduction="tsne")
+DimPlot(pbmc.uniq.subset, reduction="umap")
+
+# plot by sample ID or doublet
+Idents(pbmc.uniq.subset) <- data.frame(pbmc.uniq.subset$MULTI_ID) %>% 
+  separate(pbmc.uniq.subset.MULTI_ID, into=c("sample","condition","bc"), sep="-") %>%
+  pull(sample)
+DimPlot(pbmc.uniq.subset, reduction="tsne")
+DimPlot(pbmc.uniq.subset, reduction="umap")
+
+```
+
+There are 27,889 singlet cells. Run t-SNE and UMAP for these data.
+
+```{r}
+
+# cluster by ADT signal
+DefaultAssay(pbmc.uniq.singlet) <- "ADT"
+
+pbmc.uniq.singlet <- NormalizeData(pbmc.uniq.singlet)
+pbmc.uniq.singlet <- ScaleData(pbmc.uniq.singlet)
+pbmc.uniq.singlet <- FindVariableFeatures(pbmc.uniq.singlet)
+pbmc.uniq.singlet <- RunPCA(pbmc.uniq.singlet, npcs=100, verbose=FALSE, approx=FALSE)
+
+ElbowPlot(pbmc.uniq.singlet, ndims = 50)
+
+pbmc.uniq.singlet <- RunUMAP(pbmc.uniq.singlet, reduction = "pca", dims=1:12)
+
+
+DimPlot(pbmc.uniq.singlet, reduction="umap", group.by="condition")
+DimPlot(pbmc.uniq.singlet, reduction="umap", group.by="sample")
+
+# Downsample the clusters to a maximum of 300 cells each (makes the heatmap easier to see for
+# small clusters)
+foo.small <- subset(pbmc.uniq.singlet, downsample = 300)
+
+# Find protein markers for all clusters, and draw a heatmap
+adt.markers <- FindAllMarkers(foo.small, max.cells.per.ident = 100, min.diff.pct = 0.1, assay = "ADT", only.pos = TRUE)
+DoHeatmap(foo.small, features = unique(adt.markers$gene), assay = "ADT", angle = 90) + NoLegend()
+
+```
+
+04/22/20 Junhyong suggested identifying cell-type in each stimulation condition independently based on cell-surface markers.
+
+```{r}
+FeaturePlot(pbmc.uniq.singlet, features = "CD14-CD14", min.cutoff = "q05", max.cutoff = "q95", ncol = 4)
+
+```
+
+I'm now going to follow the vignette here: https://satijalab.org/seurat/v3.1/immune_alignment.html
+
+The goal is to try to cluster the data by cell type rather than by sample. 
+
+```{r}
+
+# # add stimulant variable
+# pbmc.uniq.singlet$sample <- Idents(pbmc.uniq.singlet) <- data.frame(pbmc.uniq.singlet$MULTI_ID) %>% 
+#   separate(pbmc.uniq.singlet.MULTI_ID, into=c("sample","condition","bc"), sep="-") %>%
+#   pull(sample)
+
+# integrate using ADT signal
+DefaultAssay(pbmc.uniq.singlet) <- "ADT"
+
+
+# check clustering based on ADT before finding anchors
+pbmc.uniq.singlet <- NormalizeData(pbmc.uniq.singlet, method = "CLR")
+pbmc.uniq.singlet <- ScaleData(pbmc.uniq.singlet)
+pbmc.uniq.singlet <- RunPCA(pbmc.uniq.singlet, npcs = 100, verbose=FALSE, approx=FALSE)
+ElbowPlot(pbmc.uniq.singlet, ndims = 50)
+pbmc.uniq.singlet <- RunUMAP(pbmc.uniq.singlet, reduction = "pca", dims = 1:15)
+DimPlot(pbmc.uniq.singlet, reduction = "umap", split.by = "sample")
+DimPlot(pbmc.uniq.singlet, reduction = "umap", split.by = "condition", group.by = "condition")
+
+DefaultAssay(pbmc.uniq.singlet) <- "RNA"
+
+pbmc.uniq.singlet <- NormalizeData(pbmc.uniq.singlet, method = "CLR")
+pbmc.uniq.singlet <- ScaleData(pbmc.uniq.singlet)
+pbmc.uniq.singlet <- FindVariableFeatures(pbmc.uniq.singlet)
+pbmc.uniq.singlet <- RunPCA(pbmc.uniq.singlet, features = rownames(pbmc.uniq.singlet), npcs = 100, verbose=FALSE, approx=FALSE)
+ElbowPlot(pbmc.uniq.singlet, ndims = 50)
+pbmc.uniq.singlet <- RunUMAP(pbmc.uniq.singlet, reduction = "pca", dims = 1:15)
+DimPlot(pbmc.uniq.singlet, reduction = "umap", split.by = "sample")
+DimPlot(pbmc.uniq.singlet, reduction = "umap", split.by = "condition", group.by = "condition")
+
+# split by sample and combine
+pbmc.list <- SplitObject(pbmc.uniq.singlet, split.by = "sample")
+
+pbmc.list <- lapply(X = pbmc.list, FUN = function(x) {
+    x <- NormalizeData(x)
+    x <- FindVariableFeatures(x, selection.method = "vst")
+})
+
+# find anchors
+pbmc.anchors <- FindIntegrationAnchors(object.list = pbmc.list, dims = 1:20)
+pbmc.comb_samp <- IntegrateData(anchorset = pbmc.anchors, dims = 1:20)
+
+```
+
+Cluster cells using ADT tags for all conditions combined
+
+```{r}
+
+DefaultAssay(pbmc.comb_samp) <- "ADT"
+
+pbmc.comb_samp <- ScaleData(pbmc.comb_samp)
+pbmc.comb_samp <- RunPCA(pbmc.comb_samp, features = rownames(pbmc.comb_samp), npcs=100, verbose=FALSE, approx=FALSE)
+
+ElbowPlot(pbmc.comb_samp, ndims = 50)
+
+pbmc.comb_samp <- RunUMAP(pbmc.comb_samp, reduction = "pca", dims=1:12)
+
+DimPlot(pbmc.comb_samp, reduction = "umap", group.by = "condition", split.by = "sample")
+
+pbmc.comb_samp <- FindNeighbors(pbmc.comb_samp, reduction = "pca", dims = 1:10)
+pbmc.comb_samp <- FindClusters(pbmc.comb_samp, resolution = 0.5)
+
+DimPlot(pbmc.comb_samp, reduction = "umap")
+
+# Downsample the clusters to a maximum of 300 cells each (makes the heatmap easier to see for
+# small clusters)
+foo.small <- subset(pbmc.comb_samp, downsample = 300)
+
+# Find protein markers for all clusters, and draw a heatmap
+adt.markers <- FindAllMarkers(foo.small, max.cells.per.ident = 100, min.diff.pct = 0.1, assay = "ADT", only.pos = TRUE)
+DoHeatmap(foo.small, features = unique(adt.markers$gene), angle = 90) + NoLegend()
+
+```
+
+Cluster cells using RNA-seq for each condition separately. Used for identifying cell types
+
+```{r}
+pbmc.list1 <- SplitObject(pbmc.comb_samp, split.by = "condition")
+
+pbmc.list1 <- lapply(X = pbmc.list1, FUN = function(x) {
+    x <- FindVariableFeatures(x, selection.method = "vst", nfeatures = 2000)
+})
+
+pbmc.anchors1 <- FindIntegrationAnchors(object.list = pbmc.list1, dims = 1:20)
+pbmc.comb_samp_stim <- IntegrateData(anchorset = pbmc.anchors1, dims = 1:20)
+
+```
+
+Analyze data integrated across sample. Cluster each condition separately
+
+```{r}
+
+DefaultAssay(pbmc.comb_samp) <- "RNA"
+pbmc.cond_list <- SplitObject(pbmc.comb_samp, split.by = "condition")
+
+# run PCA on each condition separately
+pbmc.cond_list <- lapply(X = pbmc.cond_list, FUN = function(x) {
+  x <- NormalizeData(x, method = "CLR")
+  x <- ScaleData(x)
+  x <- FindVariableFeatures(x)
+  x <- RunPCA(x, npcs=100, verbose=FALSE, approx=FALSE)
+})
+
+# elbow plots for each PCA
+ElbowPlot(pbmc.cond_list[[1]], ndims = 50)
+
+# 12 PCs seems sufficient, run UMAP for each condition
+pbmc.cond_list <- lapply(X = pbmc.cond_list, FUN = function(x) {
+    x <- RunUMAP(x, reduction = "pca", dims=1:12)
+})
+
+DimPlot(pbmc.cond_list[[1]], reduction = "umap", group.by = "sample")
+
+# cluster cells in each condition
+pbmc.cond_list <- lapply(X = pbmc.cond_list, FUN = function(x) {
+    x <- FindNeighbors(x, reduction = "pca", dims = 1:25)
+    x <- FindClusters(x, resolution = 0.5)
+})
+
+DimPlot(pbmc.cond_list[[1]], reduction = "umap", label = "TRUE")
+
+```
+
+Perhaps it would make sense to cluster based on ADT markers? Let's see if they continue to separate by condition
+
+Look for marker genes between clusters
+
+```{r}
+
+# scale ADT data for each
+pbmc.cond_list <- lapply(X = pbmc.cond_list, FUN = function(x) {
+  x <- NormalizeData(x, assay = "ADT", normalization.method = "CLR")
+  x <- ScaleData(x, assay = "ADT")
+})
+  
+# Downsample the clusters to a maximum of 300 cells each (makes the heatmap easier to see for
+# small clusters)
+foo.small <- subset(pbmc.cond_list[[1]], downsample = 300)
+
+# Find protein markers for all clusters, and draw a heatmap
+adt.markers <- FindAllMarkers(foo.small, max.cells.per.ident = 100, min.pct = min.diff.pct = 0.1, assay = "ADT", only.pos = TRUE)
+DoHeatmap(foo.small, features = unique(adt.markers$gene), assay = "ADT", angle = 90) + NoLegend()
+
+```
+
+Analyze integrated data
+
+```{r}
+
+# DefaultAssay(pbmc.combined) <- "integrated"
+
+# Run the standard workflow for visualization and clustering
+pbmc.comb_samp_stim <- ScaleData(pbmc.comb_samp_stim, verbose = FALSE)
+pbmc.comb_samp_stim <- RunPCA(pbmc.comb_samp_stim, npcs = 100, verbose = FALSE, approx = FALSE)
+
+# UMAP and Clustering
+pbmc.comb_samp_stim <- RunUMAP(pbmc.comb_samp_stim, reduction = "pca", dims = 1:20)
+pbmc.comb_samp_stim <- FindNeighbors(pbmc.comb_samp_stim, reduction = "pca", dims = 1:20)
+pbmc.comb_samp_stim <- FindClusters(pbmc.comb_samp_stim, resolution = 0.5)
+
+# plots
+DimPlot(pbmc.comb_samp_stim, reduction="umap", split.by = "sample", group.by="condition")
+DimPlot(pbmc.comb_samp_stim, reduction="umap", group.by="sample")
+DimPlot(pbmc.comb_samp_stim, reduction="umap", label="TRUE")
+DimPlot(pbmc.comb_samp_stim, reduction="umap", split.by="condition")
+
+# plot non-integrated data colored by cell-type
+DimPlot(pbmc.uniq.singlet, reduction="umap", label="TRUE")
+
+```
+
+Show surface markers
+
+```{r}
+
+pbmc.comb_samp_stim <- NormalizeData(pbmc.comb_samp_stim, assay = "ADT", normalization.method = "CLR")
+pbmc.comb_samp_stim <- ScaleData(pbmc.comb_samp_stim, assay = "ADT")
+
+DefaultAssay(pbmc.comb_samp_stim) <- "ADT"
+
+FeaturePlot(pbmc.comb_samp_stim, features = "CD14-CD14", min.cutoff = "q05", max.cutoff = "q95", ncol = 4)
+
+```
+
+Get marker genes
+
+```{r}
+
+library(clue)
+
+pbmc.markers <- FindAllMarkers(pbmc.comb_samp_stim, assay = "RNA", only.pos = TRUE, min.pct = 0.25, logfc.threshold = 0.25)
+
+pbmc.adt_markers <- FindAllMarkers(pbmc.comb_samp_stim, assay = "ADT", only.pos = TRUE, min.pct = 0.25, logfc.threshold = 0.25)
+
+max_p = max(pbmc.adt_markers$p_val)
+# number to fill the Hungarian matrix with
+hung_mat = pbmc.adt_markers %>%
+  select(c(cluster,gene,p_val)) %>%
+  spread(key=cluster, value=p_val, fill=max_p) %>%
+  column_to_rownames("gene") %>%
+  as.matrix
+
+dim_hung_mat = dim(hung_mat)
+
+hung_mat = cbind(hung_mat, matrix(max_p, nrow=dim_hung_mat[1], ncol=(dim_hung_mat[1]-dim_hung_mat[2])))
+
+hung_mat_solve = solve_LSAP(hung_mat)
+
+best_adt_markers = data.frame(cluster=0:18,
+                              gene=rownames(hung_mat)[hung_mat_solve[1:19]],
+                              stringsAsFactors=F)
+
+FeaturePlot(pbmc.comb_samp_stim, features = best_adt_markers$gene, min.cutoff = "q05", max.cutoff = "q95", ncol = 5)
+
+```
+
+Dimensionality reduction on ADT markers
+
+```{r}
+
+DefaultAssay(pbmc.uniq.singlet) <- "ADT"
+
+# split by sample and combine
+pbmc.list <- SplitObject(pbmc.uniq.singlet, split.by = "sample")
+
+pbmc.list <- lapply(X = pbmc.list, FUN = function(x) {
+    x <- NormalizeData(x, normalization.method = "CLR")
+    x <- FindVariableFeatures(x, selection.method = "vst", nfeatures = 20)
+})
+
+# find anchors
+pbmc.anchors <- FindIntegrationAnchors(object.list = pbmc.list, assay = rep("ADT", length(pbmc.list)), dims = 1:20)
+pbmc.comb_samp <- IntegrateData(anchorset = pbmc.anchors, dims = 1:20)
+
+pbmc.list1 <- SplitObject(pbmc.comb_samp, split.by = "stim")
+
+pbmc.list1 <- lapply(X = pbmc.list1, FUN = function(x) {
+    x <- FindVariableFeatures(x, selection.method = "vst", nfeatures = 20)
+})
+
+pbmc.anchors1 <- FindIntegrationAnchors(object.list = pbmc.list1, assay = rep("ADT", length(pbmc.list1)), dims = 1:20)
+pbmc.adt.comb_samp_stim <- IntegrateData(anchorset = pbmc.anchors1, dims = 1:20)
+
+```
+
+Cluster based on ADT data
+
+```{r}
+
+DefaultAssay(pbmc.adt.comb_samp_stim) <- "integrated"
+
+# Run the standard workflow for visualization and clustering
+pbmc.adt.comb_samp_stim <- ScaleData(pbmc.adt.comb_samp_stim, verbose = FALSE)
+pbmc.adt.comb_samp_stim <- RunPCA(pbmc.adt.comb_samp_stim, npcs = 30, verbose = FALSE, approx = FALSE)
+# UMAP and Clustering
+pbmc.adt.comb_samp_stim <- RunUMAP(pbmc.adt.comb_samp_stim, reduction = "pca", dims = 1:20)
+pbmc.adt.comb_samp_stim <- FindNeighbors(pbmc.adt.comb_samp_stim, reduction = "pca", dims = 1:20)
+pbmc.adt.comb_samp_stim <- FindClusters(pbmc.adt.comb_samp_stim, resolution = 0.5)
+
+Idents(pbmc.adt.comb_samp_stim) <- data.frame(pbmc.adt.comb_samp_stim$MULTI_ID) %>% 
+  separate(pbmc.adt.comb_samp_stim.MULTI_ID, into=c("sample","condition","bc"), sep="-") %>%
+  mutate(condition = ifelse(condition=="IFNBa", "IFNB", condition)) %>% # I messed up and have two IFNB variables
+  pull(condition)
+
+DimPlot(pbmc.adt.comb_samp_stim, reduction="umap", group.by="stim")
+DimPlot(pbmc.adt.comb_samp_stim, reduction="umap", group.by="sample")
+DimPlot(pbmc.adt.comb_samp_stim, reduction="umap", label="TRUE")
+DimPlot(pbmc.adt.comb_samp_stim, reduction="umap", split.by="stim")
+
+```
+
+Find ADT markers
+
+```{r}
+
+pbmc.adt.adt_markers <- FindAllMarkers(pbmc.adt.comb_samp_stim, assay = "ADT", only.pos = TRUE, min.pct = 0.25, logfc.threshold = 0.25)
+
+best_adt_adt_markers <- c()
+for (i in 0:18){
+  marker <- pbmc.adt_markers %>%
+    filter(cluster==i) %>%
+    filter(!(gene %in% best_adt_markers)) %>%
+    filter(p_val == min(p_val)) %>%
+    filter(avg_logFC == max(avg_logFC)) %>%
+    pull(gene)
+  
+  best_adt_adt_markers <- c(best_adt_adt_markers, marker)
+}
+
+```
+
+Normalize and run PCA on gene expression
+
+```{r}
+
+# standard log-normalization
+pbmc.umis <- NormalizeData(pbmc.umis)
+
+# choose ~1k variable features
+pbmc.umis <- FindVariableFeatures(pbmc.umis)
+
+# standard scaling (no regression)
+pbmc.umis <- ScaleData(pbmc.umis)
+
+# Run PCA, select 13 PCs for tSNE visualization and graph-based clustering
+pbmc.umis <- RunPCA(pbmc.umis)
+ElbowPlot(pbmc.umis, ndims = 50)
+
+```
+
+t-SNE
+
+```{r}
+
+pbmc.umis <- FindNeighbors(pbmc.umis, dims = 1:25)
+pbmc.umis <- FindClusters(pbmc.umis, resolution = 0.8)
+pbmc.umis <- RunTSNE(pbmc.umis, dims = 1:25, method = "FIt-SNE")
+
+DimPlot(pbmc.umis, label = FALSE) + NoLegend()
+```

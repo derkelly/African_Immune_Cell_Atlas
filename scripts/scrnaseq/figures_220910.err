@@ -1,0 +1,3088 @@
+/home/derkelly/.lsbatch/1662943666.74327096: line 8: R: command not found
+/home/derkelly/.lsbatch/1662943712.74327097: line 8: R: command not found
+/gpfs/fs02/apps/R/4.0.2/lib64/R/bin/Rcmd: line 64: exec: figures_220910.R: not found
+Fatal error: you must specify '--save', '--no-save' or '--vanilla'
+Attaching SeuratObject
+Attaching sp
+── Attaching packages ─────────────────────────────────────── tidyverse 1.3.1 ──
+✔ ggplot2 3.3.5     ✔ purrr   0.3.4
+✔ tibble  3.1.6     ✔ dplyr   1.0.8
+✔ tidyr   1.2.0     ✔ stringr 1.4.0
+✔ readr   2.1.2     ✔ forcats 0.5.1
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+Rows: 18 Columns: 14
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr (14): lib, foo1, foo2, foo3, foo4, foo5, samp_1, samp_2, samp_3, samp_4,...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Warning message:
+Expected 2 pieces. Missing pieces filled with `NA` in 1 rows [59]. 
+Rows: 63 Columns: 17
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr (15): lib, foo1, foo2, foo5, foo6, foo7, foo8, samp_1, samp_2, samp_3, s...
+dbl  (2): foo3, foo4
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 107 Columns: 6
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr (5): field_id, lab_id, sex, pop, topmed_id
+dbl (1): age
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 30941 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Warning message:
+Expected 3 pieces. Additional pieces discarded in 22968 rows [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, ...]. 
+Computing 2000 integration features
+Scaling features for provided objects
+Computing within dataset neighborhoods
+Error in FindIntegrationAnchors(object.list = cells.list, reference = c(60),  : 
+  Error: requested reference object 60 but only 1 objects provided
+Execution halted
+/home/derkelly/.lsbatch/1662949303.74327158: line 8: Rscript: command not found
+Attaching SeuratObject
+Attaching sp
+── Attaching packages ─────────────────────────────────────── tidyverse 1.3.1 ──
+✔ ggplot2 3.3.5     ✔ purrr   0.3.4
+✔ tibble  3.1.6     ✔ dplyr   1.0.8
+✔ tidyr   1.2.0     ✔ stringr 1.4.0
+✔ readr   2.1.2     ✔ forcats 0.5.1
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+Rows: 18 Columns: 14
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr (14): lib, foo1, foo2, foo3, foo4, foo5, samp_1, samp_2, samp_3, samp_4,...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 63 Columns: 17
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr (15): lib, foo1, foo2, foo5, foo6, foo7, foo8, samp_1, samp_2, samp_3, s...
+dbl  (2): foo3, foo4
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 107 Columns: 6
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr (5): field_id, lab_id, sex, pop, topmed_id
+dbl (1): age
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 28966 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 31197 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 25453 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 34877 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 34453 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 21958 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 14565 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 14473 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 13156 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 14080 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 14729 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 12589 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 23828 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 24272 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 22126 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 26122 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 27328 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 27061 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 23255 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 22523 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 53773 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 19573 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 20700 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 18103 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 25987 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 24018 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 24739 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 18901 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 17872 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 21459 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 20150 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 14384 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 18266 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 27141 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 27333 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 32485 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 25843 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 27702 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 28648 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 22345 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 21864 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 21163 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 19927 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 20401 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 19551 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 21859 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 21594 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 22101 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 22592 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 19716 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 20063 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 27589 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 25166 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 24290 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 28811 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 33193 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 29101 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 30695 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 29938 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 31192 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 26081 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 29055 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 28655 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 24470 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 31998 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 25241 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 23213 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 23508 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 22460 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 35815 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 32447 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 33139 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 32825 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 33268 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 32898 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 26307 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 26082 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 30126 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 27974 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 30663 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 30941 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+There were 50 or more warnings (use warnings() to see the first 50)
+
+Execution halted
+Attaching SeuratObject
+Attaching sp
+── Attaching packages ─────────────────────────────────────── tidyverse 1.3.1 ──
+✔ ggplot2 3.3.5     ✔ purrr   0.3.4
+✔ tibble  3.1.6     ✔ dplyr   1.0.8
+✔ tidyr   1.2.0     ✔ stringr 1.4.0
+✔ readr   2.1.2     ✔ forcats 0.5.1
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+Rows: 18 Columns: 14
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr (14): lib, foo1, foo2, foo3, foo4, foo5, samp_1, samp_2, samp_3, samp_4,...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 63 Columns: 17
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr (15): lib, foo1, foo2, foo5, foo6, foo7, foo8, samp_1, samp_2, samp_3, s...
+dbl  (2): foo3, foo4
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 107 Columns: 6
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr (5): field_id, lab_id, sex, pop, topmed_id
+dbl (1): age
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 28966 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 31197 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 25453 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 34877 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 34453 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 21958 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 14565 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 14473 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 13156 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 14080 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 14729 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 12589 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 23828 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 24272 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 22126 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 26122 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 27328 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 27061 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 23255 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 22523 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 53773 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 19573 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 20700 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 18103 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 25987 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 24018 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 24739 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 18901 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 17872 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 21459 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 20150 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 14384 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 18266 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 27141 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 27333 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 32485 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 25843 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 27702 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 28648 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 22345 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 21864 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 21163 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 19927 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 20401 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 19551 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 21859 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 21594 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 22101 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 22592 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 19716 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 20063 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 27589 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 25166 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 24290 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 28811 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 33193 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 29101 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 30695 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 29938 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 31192 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 26081 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 29055 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 28655 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 24470 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 31998 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 25241 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 23213 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 23508 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 22460 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 35815 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 32447 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 33139 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 32825 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 33268 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 32898 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 26307 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 26082 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 30126 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 27974 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 30663 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 30941 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+There were 50 or more warnings (use warnings() to see the first 50)
+
+Warning messages:
+1: In CheckDuplicateCellNames(object.list = objects) :
+  Some cell names are duplicated across objects provided. Renaming to enforce unique cell names.
+2: In CheckDuplicateCellNames(object.list = objects) :
+  Some cell names are duplicated across objects provided. Renaming to enforce unique cell names.
+3: In CheckDuplicateCellNames(object.list = objects) :
+  Some cell names are duplicated across objects provided. Renaming to enforce unique cell names.
+Execution halted
+/home/derkelly/.lsbatch/1663004675.74329004: line 8: Rscript: command not found
+Attaching SeuratObject
+Attaching sp
+── Attaching packages ─────────────────────────────────────── tidyverse 1.3.1 ──
+✔ ggplot2 3.3.5     ✔ purrr   0.3.4
+✔ tibble  3.1.6     ✔ dplyr   1.0.8
+✔ tidyr   1.2.0     ✔ stringr 1.4.0
+✔ readr   2.1.2     ✔ forcats 0.5.1
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+Rows: 18 Columns: 14
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr (14): lib, foo1, foo2, foo3, foo4, foo5, samp_1, samp_2, samp_3, samp_4,...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 63 Columns: 17
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr (15): lib, foo1, foo2, foo5, foo6, foo7, foo8, samp_1, samp_2, samp_3, s...
+dbl  (2): foo3, foo4
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 107 Columns: 6
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr (5): field_id, lab_id, sex, pop, topmed_id
+dbl (1): age
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 31197 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Warning message:
+Expected 3 pieces. Additional pieces discarded in 23375 rows [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, ...]. 
+Error in h(simpleError(msg, call)) : 
+  error in evaluating the argument 'x' in selecting a method for function 'merge': object 'cells.merge' not found
+Calls: merge -> .handleSimpleError -> h
+Execution halted
+Attaching SeuratObject
+Attaching sp
+── Attaching packages ─────────────────────────────────────── tidyverse 1.3.1 ──
+✔ ggplot2 3.3.5     ✔ purrr   0.3.4
+✔ tibble  3.1.6     ✔ dplyr   1.0.8
+✔ tidyr   1.2.0     ✔ stringr 1.4.0
+✔ readr   2.1.2     ✔ forcats 0.5.1
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+Rows: 18 Columns: 14
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr (14): lib, foo1, foo2, foo3, foo4, foo5, samp_1, samp_2, samp_3, samp_4,...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 63 Columns: 17
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr (15): lib, foo1, foo2, foo5, foo6, foo7, foo8, samp_1, samp_2, samp_3, s...
+dbl  (2): foo3, foo4
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 107 Columns: 6
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr (5): field_id, lab_id, sex, pop, topmed_id
+dbl (1): age
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 31197 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Warning message:
+Expected 3 pieces. Additional pieces discarded in 23375 rows [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, ...]. 
+Error in h(simpleError(msg, call)) : 
+  error in evaluating the argument 'x' in selecting a method for function 'merge': object 'cells.merge' not found
+Calls: merge -> .handleSimpleError -> h
+Execution halted
+Attaching SeuratObject
+Attaching sp
+── Attaching packages ─────────────────────────────────────── tidyverse 1.3.1 ──
+✔ ggplot2 3.3.5     ✔ purrr   0.3.4
+✔ tibble  3.1.6     ✔ dplyr   1.0.8
+✔ tidyr   1.2.0     ✔ stringr 1.4.0
+✔ readr   2.1.2     ✔ forcats 0.5.1
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+Rows: 18 Columns: 14
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr (14): lib, foo1, foo2, foo3, foo4, foo5, samp_1, samp_2, samp_3, samp_4,...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 63 Columns: 17
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr (15): lib, foo1, foo2, foo5, foo6, foo7, foo8, samp_1, samp_2, samp_3, s...
+dbl  (2): foo3, foo4
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 107 Columns: 6
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr (5): field_id, lab_id, sex, pop, topmed_id
+dbl (1): age
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 28966 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Warning message:
+Expected 3 pieces. Additional pieces discarded in 11538 rows [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, ...]. 
+Rows: 31197 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 25453 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 34877 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 34453 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 21958 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 14565 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 14473 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 13156 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 14080 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 14729 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 12589 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 23828 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 24272 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 22126 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 26122 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 27328 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 27061 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 23255 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 22523 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 53773 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 19573 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 20700 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 18103 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 25987 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 24018 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 24739 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 18901 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 17872 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 21459 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 20150 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 14384 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 18266 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 27141 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 27333 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 32485 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 25843 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 27702 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+
+There were 50 or more warnings (use warnings() to see the first 50)
+Execution halted
+Attaching SeuratObject
+Attaching sp
+── Attaching packages ─────────────────────────────────────── tidyverse 1.3.1 ──
+✔ ggplot2 3.3.5     ✔ purrr   0.3.4
+✔ tibble  3.1.6     ✔ dplyr   1.0.8
+✔ tidyr   1.2.0     ✔ stringr 1.4.0
+✔ readr   2.1.2     ✔ forcats 0.5.1
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+Rows: 18 Columns: 14
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr (14): lib, foo1, foo2, foo3, foo4, foo5, samp_1, samp_2, samp_3, samp_4,...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 63 Columns: 17
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr (15): lib, foo1, foo2, foo5, foo6, foo7, foo8, samp_1, samp_2, samp_3, s...
+dbl  (2): foo3, foo4
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 107 Columns: 6
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr (5): field_id, lab_id, sex, pop, topmed_id
+dbl (1): age
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 28966 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Warning message:
+Expected 3 pieces. Additional pieces discarded in 11538 rows [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, ...]. 
+Error in nrow(path_lib.map)[TRUE, FALSE] : incorrect number of dimensions
+Execution halted
+Attaching SeuratObject
+Attaching sp
+── Attaching packages ─────────────────────────────────────── tidyverse 1.3.1 ──
+✔ ggplot2 3.3.5     ✔ purrr   0.3.4
+✔ tibble  3.1.6     ✔ dplyr   1.0.8
+✔ tidyr   1.2.0     ✔ stringr 1.4.0
+✔ readr   2.1.2     ✔ forcats 0.5.1
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+Rows: 18 Columns: 14
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr (14): lib, foo1, foo2, foo3, foo4, foo5, samp_1, samp_2, samp_3, samp_4,...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 63 Columns: 17
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr (15): lib, foo1, foo2, foo5, foo6, foo7, foo8, samp_1, samp_2, samp_3, s...
+dbl  (2): foo3, foo4
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 107 Columns: 6
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr (5): field_id, lab_id, sex, pop, topmed_id
+dbl (1): age
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 28966 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Warning message:
+Expected 3 pieces. Additional pieces discarded in 11538 rows [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, ...]. 
+Error in nrow(path_lib.map)[FALSE, TRUE] : incorrect number of dimensions
+Execution halted
+Attaching SeuratObject
+Attaching sp
+── Attaching packages ─────────────────────────────────────── tidyverse 1.3.1 ──
+✔ ggplot2 3.3.5     ✔ purrr   0.3.4
+✔ tibble  3.1.6     ✔ dplyr   1.0.8
+✔ tidyr   1.2.0     ✔ stringr 1.4.0
+✔ readr   2.1.2     ✔ forcats 0.5.1
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+Rows: 18 Columns: 14
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr (14): lib, foo1, foo2, foo3, foo4, foo5, samp_1, samp_2, samp_3, samp_4,...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 63 Columns: 17
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr (15): lib, foo1, foo2, foo5, foo6, foo7, foo8, samp_1, samp_2, samp_3, s...
+dbl  (2): foo3, foo4
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 107 Columns: 6
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr (5): field_id, lab_id, sex, pop, topmed_id
+dbl (1): age
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 28966 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Warning message:
+Expected 3 pieces. Additional pieces discarded in 11538 rows [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, ...]. 
+Error in 2:nrow(path_lib.map)[c(FALSE, TRUE)] : NA/NaN argument
+Execution halted
+Attaching SeuratObject
+Attaching sp
+── Attaching packages ─────────────────────────────────────── tidyverse 1.3.1 ──
+✔ ggplot2 3.3.5     ✔ purrr   0.3.4
+✔ tibble  3.1.6     ✔ dplyr   1.0.8
+✔ tidyr   1.2.0     ✔ stringr 1.4.0
+✔ readr   2.1.2     ✔ forcats 0.5.1
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+Rows: 18 Columns: 14
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr (14): lib, foo1, foo2, foo3, foo4, foo5, samp_1, samp_2, samp_3, samp_4,...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 63 Columns: 17
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr (15): lib, foo1, foo2, foo5, foo6, foo7, foo8, samp_1, samp_2, samp_3, s...
+dbl  (2): foo3, foo4
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 107 Columns: 6
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr (5): field_id, lab_id, sex, pop, topmed_id
+dbl (1): age
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 28966 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Warning message:
+Expected 3 pieces. Additional pieces discarded in 11538 rows [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, ...]. 
+Rows: 25453 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 34453 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 14565 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 13156 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 14729 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 23828 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 22126 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 27328 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 23255 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 53773 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 20700 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 25987 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 24739 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 17872 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 20150 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 18266 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 27333 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 25843 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 28648 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 21864 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 19927 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 19551 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 21594 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 22592 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 20063 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 25166 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 28811 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 29101 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 29938 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 26081 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 28655 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 31998 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 23213 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+
+There were 50 or more warnings (use warnings() to see the first 50)
+Execution halted
+Attaching SeuratObject
+Attaching sp
+── Attaching packages ─────────────────────────────────────── tidyverse 1.3.1 ──
+✔ ggplot2 3.3.5     ✔ purrr   0.3.4
+✔ tibble  3.1.6     ✔ dplyr   1.0.8
+✔ tidyr   1.2.0     ✔ stringr 1.4.0
+✔ readr   2.1.2     ✔ forcats 0.5.1
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+Rows: 18 Columns: 14
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr (14): lib, foo1, foo2, foo3, foo4, foo5, samp_1, samp_2, samp_3, samp_4,...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 63 Columns: 17
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr (15): lib, foo1, foo2, foo5, foo6, foo7, foo8, samp_1, samp_2, samp_3, s...
+dbl  (2): foo3, foo4
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 107 Columns: 6
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr (5): field_id, lab_id, sex, pop, topmed_id
+dbl (1): age
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Error: unexpected ')' in:
+"    
+    cells.list[[info$lib]] <- cells.raw)"
+Execution halted
+Attaching SeuratObject
+Attaching sp
+── Attaching packages ─────────────────────────────────────── tidyverse 1.3.1 ──
+✔ ggplot2 3.3.5     ✔ purrr   0.3.4
+✔ tibble  3.1.6     ✔ dplyr   1.0.8
+✔ tidyr   1.2.0     ✔ stringr 1.4.0
+✔ readr   2.1.2     ✔ forcats 0.5.1
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+Rows: 18 Columns: 14
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr (14): lib, foo1, foo2, foo3, foo4, foo5, samp_1, samp_2, samp_3, samp_4,...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 63 Columns: 17
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr (15): lib, foo1, foo2, foo5, foo6, foo7, foo8, samp_1, samp_2, samp_3, s...
+dbl  (2): foo3, foo4
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 107 Columns: 6
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr (5): field_id, lab_id, sex, pop, topmed_id
+dbl (1): age
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 28966 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 25453 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 34453 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 14565 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 13156 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 14729 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 23828 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 22126 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 27328 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 23255 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 53773 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 20700 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 25987 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 24739 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 17872 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 20150 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 18266 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 27333 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 25843 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 28648 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 21864 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 19927 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 19551 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 21594 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 22592 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 20063 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 25166 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 28811 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 29101 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 29938 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 26081 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 28655 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 31998 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 23213 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 22460 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 32447 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 32825 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 32898 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 26082 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 27974 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 30941 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+There were 41 warnings (use warnings() to see them)
+There were 20 warnings (use warnings() to see them)
+Error in SaveH5Seurat(cells.merge, overwrite = TRUE) : 
+  could not find function "SaveH5Seurat"
+Execution halted
+Attaching SeuratObject
+Attaching sp
+Registered S3 method overwritten by 'SeuratDisk':
+  method            from  
+  as.sparse.H5Group Seurat
+── Attaching packages ─────────────────────────────────────── tidyverse 1.3.1 ──
+✔ ggplot2 3.3.5     ✔ purrr   0.3.4
+✔ tibble  3.1.6     ✔ dplyr   1.0.8
+✔ tidyr   1.2.0     ✔ stringr 1.4.0
+✔ readr   2.1.2     ✔ forcats 0.5.1
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+Rows: 18 Columns: 14
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr (14): lib, foo1, foo2, foo3, foo4, foo5, samp_1, samp_2, samp_3, samp_4,...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 63 Columns: 17
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr (15): lib, foo1, foo2, foo5, foo6, foo7, foo8, samp_1, samp_2, samp_3, s...
+dbl  (2): foo3, foo4
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 107 Columns: 6
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr (5): field_id, lab_id, sex, pop, topmed_id
+dbl (1): age
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 28966 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Warning message:
+Expected 3 pieces. Additional pieces discarded in 11538 rows [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, ...]. 
+Rows: 25453 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 34453 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 14565 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 13156 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 14729 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 23828 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 22126 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 27328 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 23255 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 53773 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 20700 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 25987 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 24739 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 17872 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 20150 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 18266 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 27333 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 25843 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 28648 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 21864 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 19927 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 19551 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 21594 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 22592 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 20063 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 25166 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 28811 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 29101 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 29938 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 26081 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 28655 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 31998 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 23213 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 22460 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 32447 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 32825 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 32898 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 26082 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 27974 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+Rows: 30941 Columns: 20
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: "\t"
+chr  (7): BARCODE, DROPLET.TYPE, BEST.GUESS, NEXT.GUESS, SNG.BEST.GUESS, SNG...
+dbl (13): INT_ID, NUM.SNPS, NUM.READS, BEST.LLK, NEXT.LLK, DIFF.LLK.BEST.NEX...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+There were 50 or more warnings (use warnings() to see the first 50)
+Creating h5Seurat file for version 3.1.5.9900
+Adding counts for RNA
+Adding data for RNA
+No variable features found for RNA
+No feature-level metadata found for RNA

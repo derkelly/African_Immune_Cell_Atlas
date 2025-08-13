@@ -1,0 +1,900 @@
+---
+title: "tishkoff_pilot21"
+author: "derkelly"
+date: "1/28/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r libraries}
+library(Matrix)
+library(Seurat)
+library(tidyverse)
+library(ggplot2)
+library(patchwork)
+library(gprofiler2)
+```
+
+
+## UMI counts
+
+Code adapted from https://satijalab.org/seurat/v3.1/hashing_vignette.html
+
+Functions for manipulating barcodes
+
+```{r}
+
+# get the stem of the barcode (i.e. exclude additional identifiers)
+get_stem <- function(bcs){ vapply(strsplit(bcs,"-"), `[`, 1, FUN.VALUE=character(1)) }
+
+# get barcodes whose sequence only occur once
+get_sngls <- function(bcs){
+  
+  bc_stem <- get_stem(bcs)
+  bc_counts <- table(bc_stem)
+  
+  return(bcs[bc_stem %in% names(bc_counts)[bc_counts==1]])
+}
+
+```
+
+
+QC individual lanes
+
+```{r}
+
+# read in expression data
+meta.list = list()
+gex.list = list()
+for (i in 1:3){
+
+  gex_name <- paste0("GEX", i)
+  
+  gex.data <- Read10X(data.dir = paste0("count/tishkoff_pilot21_L",
+                                  i, "/outs/filtered_feature_bc_matrix"))
+  
+  meta.data <- read_csv(paste0("count/tishkoff_pilot21_L",
+                               i, "/outs/metrics_summary.csv"))
+  colnames(meta.data) <- make.names(colnames(meta.data))
+  
+  meta.list[[gex_name]] <- meta.data
+  
+  gex <- CreateSeuratObject(
+    counts = gex.data,
+    project = gex_name,
+    min.cells=3,
+    min.features=200)
+  
+  gex[["percent.mt"]] <- PercentageFeatureSet(gex, pattern = "^MT-")
+  
+  gex.list[[gex_name]] <- gex
+
+}
+
+
+# create ECDF plots of nFeature_RNA, nCount_RNA, and percent MT
+gex.ecdf.df = data.frame()
+for (i in 1:3){
+
+  gex_name <- paste0("GEX", i)
+  df.tmp <- rbind(data.frame(lane = i,
+                             feature = "nFeature_RNA",
+                             value = gex.list[[gex_name]]$nFeature_RNA),
+                  data.frame(lane = i,
+                             feature = "nCount_RNA",
+                             value = gex.list[[gex_name]]$nCount_RNA),
+                  data.frame(lane = i,
+                             feature = "percent.mt",
+                             value = gex.list[[gex_name]]$percent.mt))
+  
+  gex.ecdf.df <- rbind(gex.ecdf.df, df.tmp)
+}
+
+gex.ecdf.df %>%
+  mutate(lane = factor(lane)) %>%
+  ggplot(aes(x=value+0.01, color=lane)) +
+  stat_ecdf() +
+  theme_classic(base_size=15) +
+  facet_grid(. ~ feature, scales="free_x")
+
+```
+
+
+Read in data
+
+```{r data}
+
+# code adapted from https://satijalab.org/seurat/v3.1/pbmc3k_tutorial.html
+
+# Load the PBMC dataset
+# load the hto info
+gex.list = list()
+for (i in 1:3){
+
+  gex.data <- Read10X(data.dir = paste0("count/tishkoff_pilot21_L", i, "/outs/filtered_feature_bc_matrix"))
+  # remove well info
+  colnames(gex.data) <- get_stem(colnames(gex.data))
+  
+  hto.data <- Read10X(data.dir = paste0("citeseqcount/D70", i, "/umi_count"), gene.column=1)
+  # remove unmapped
+  hto.data <- hto.data[!(rownames(hto.data)=="unmapped"),]
+  # rename columns to include the lane
+  colnames(hto.data) <- get_stem(colnames(hto.data))
+  
+  gex.data <- gex.data[, colnames(gex.data) %in% colnames(hto.data)]
+  hto.data <- hto.data[, colnames(hto.data) %in% colnames(gex.data)]
+  
+  gex <- CreateSeuratObject(gex.data, project=paste0("L", i))
+  hto <- CreateAssayObject(hto.data)
+  gex[["HTO"]] <- hto
+  
+  gex <- NormalizeData(gex, assay = "HTO", normalization.method = "CLR")
+
+  gex <- HTODemux(gex, assay = "HTO", positive.quantile = 0.99)
+  # gex <- MULTIseqDemux(gex, assay = "HTO", autoThresh = T)
+  # x = as.character(gex$MULTI_ID)
+  # gex$MULTI_ID.global <- ifelse(x %in% c("Doublet","Negative"), x, "Singlet")
+  
+  Idents(gex) <- "HTO_classification.global"
+  
+  gex.list[[i]] <- gex
+}
+
+gex <- merge(merge(gex.list[[1]],
+                   gex.list[[2]],
+                   add.cell.ids = c("L1", "L2")),
+             gex.list[[3]], add.cell.ids = c("", "L3"))
+
+
+
+
+# visualize UMI with global classification
+Idents(gex) <- "HTO_classification.global"
+VlnPlot(gex, features = "nCount_RNA", pt.size = 0.01, log = TRUE)
+
+
+HTOHeatmap(gex, assay = "HTO", ncells = 5000)
+
+
+# add sample and stim information
+samp_stim = data.frame(HTO_maxID=gex$HTO_maxID) %>% 
+  separate(HTO_maxID, into=c("sample","stim","bc"), sep="-")
+
+gex$sample = samp_stim$sample
+gex$stim = samp_stim$stim
+
+
+# get singlets
+gex.singlet <- subset(gex, idents = "Singlet")
+
+```
+
+
+See if cells cluster by library, sample, or condition (hopefully just condition)
+
+```{r}
+
+# get mitochondrial amount
+gex.singlet[["percent.mt"]] = PercentageFeatureSet(gex.singlet, pattern = "^MT-")
+
+# filter
+gex.singlet = subset(gex.singlet, subset = nFeature_RNA > 200 & nFeature_RNA < 2500 & percent.mt < 5)
+
+# # log normalize
+gex.singlet = NormalizeData(gex.singlet, normalization.method = "LogNormalize", scale.factor = 10000)
+
+set.seed(42)
+
+# SCTransform
+gex.singlet <- SCTransform(gex.singlet, vars.to.regress = "percent.mt")
+
+# # find variable features
+# gex.singlet = FindVariableFeatures(gex.singlet, selection.method = "vst", nfeatures = 2000)
+# 
+# scale data
+all.genes = rownames(gex.singlet)
+gex.singlet = NormalizeData(gex.singlet, assay = "RNA", normalization.method = "LogNormalize", scale.factor = 10000)
+gex.singlet = ScaleData(gex.singlet, assay = "RNA", features = all.genes)
+
+# run PCA
+gex.singlet = RunPCA(gex.singlet, npcs=100)
+
+ElbowPlot(gex.singlet, ndims = 50)
+
+gex.singlet <- FindNeighbors(gex.singlet, dims = 1:30)
+gex.singlet <- FindClusters(gex.singlet, resolution = 0.3)
+
+# run UMAP
+gex.singlet <- RunUMAP(gex.singlet, dims = 1:30)
+
+DimPlot(gex.singlet, reduction = "pca", group.by="sample")
+DimPlot(gex.singlet, reduction = "pca", group.by="stim")
+
+DimPlot(gex.singlet, reduction = "umap")
+DimPlot(gex.singlet, reduction = "umap", group.by = "sample")
+DimPlot(gex.singlet, reduction = "umap", group.by = "stim")
+DimPlot(gex.singlet, reduction = "umap", group.by = "orig.ident")
+
+
+jimmie.markers = c("CD14","S100A9","CTSS","FCGR3A", "CDKN1C", "FCER1A", "CD1C", "HLA-DQA1", "JCHAIN", "PLD4", "SERPINF1", "LILRA4", "PRSS57", "SOX4", "STMN1", "TOP2A", "CD3E", "CD3A", "CD38", "CD40LG", "CCR7", "IL7R", "RTKN2", "FOXP3", "PRF1", "GZMH", "GZMB", "GZMK", "KLRB1", "GNLY", "NKG7", "CD79A", "MZB1", "IGLL5", "BANK1", "CD19", "MS4A1")
+
+DoHeatmap(gex.singlet, features = jimmie.markers) + NoLegend()
+
+
+gex.markers <- FindAllMarkers(gex.singlet, only.pos = TRUE, min.pct = 0.25, logfc.threshold = 0.25)
+
+```
+
+
+Cell type fractions across conditions
+
+```{r}
+
+ctypes = c("NK/T","B","NK/T","Mono","NK/T","Mono","Mono","B","pB","pDC", "progen")
+
+
+
+data.frame(stim = gex.singlet$stim,
+           ctype = ctypes[as.numeric(gex.singlet$seurat_clusters)]) %>%
+  ggplot(aes(x=stim, fill=ctype)) + 
+  geom_bar(position="fill") +
+  theme_classic()
+
+data.frame(sample = gex.singlet$sample,
+           ctype = ctypes[as.numeric(gex.singlet$seurat_clusters)]) %>%
+  ggplot(aes(x=sample, fill=ctype)) + 
+  geom_bar(position="fill") +
+  theme_classic()
+
+# number of cells expressing CD14
+
+
+```
+
+
+What is the distribution of CD14+ expression?
+
+```{r}
+
+FeaturePlot(gex.singlet, features = c("CD14"), split.by = "stim")
+FeaturePlot(gex.singlet, features = c("CD16"), split.by = "stim")
+
+```
+
+
+Differential expression between 'unculture' and 'Ctrl' cells
+
+```{r}
+
+Idents(gex.singlet) <- "stim"
+
+cult_mono_de = FindMarkers(object = subset(gex.singlet, subset = seurat_clusters %in% c(3,6)),
+                          ident.1 = "Ctrl",
+                          ident.2 = "unculture",
+                          logfc.threshold = 0.25)
+
+cult_mono_go = gost(query = rownames(cult_mono_de),
+                   custom_bg = rownames(gex.singlet),
+                   organism = "hsapiens")
+
+cult_mono_go_up = gost(query = rownames(cult_mono_de[cult_mono_de$avg_log2FC > 0,]),
+                   custom_bg = rownames(gex.singlet),
+                   organism = "hsapiens")
+
+cult_mono_go_down = gost(query = rownames(cult_mono_de[cult_mono_de$avg_log2FC < 0,]),
+                   custom_bg = rownames(gex.singlet),
+                   organism = "hsapiens")
+
+cult_b_de = FindMarkers(object = subset(gex.singlet, subset = seurat_clusters %in% c(1,7)),
+                          ident.1 = "Ctrl",
+                          ident.2 = "unculture",
+                          logfc.threshold = 0.25)
+
+cult_b_go = gost(query = rownames(cult_b_de),
+                 custom_bg = rownames(gex.singlet),
+                 organism = "hsapiens")
+
+cult_t_de = FindMarkers(object = subset(gex.singlet, subset = seurat_clusters %in% c(0,2,4)),
+                          ident.1 = "Ctrl",
+                          ident.2 = "unculture",
+                          logfc.threshold = 0.25)
+
+cult_t_go = gost(query = rownames(cult_t_de[cult_]),
+                 custom_bg = rownames(gex.singlet),
+                 organism = "hsapiens")
+
+ggvenn(data = list(Monocytes = rownames(cult_mono_de),
+                   `B-cells` = rownames(cult_b_de),
+                   `T-cells` = rownames(cult_t_de)),
+)
+
+
+# wordcloud of monocyte DE genes
+
+cult_mono_go_up.bp.frq = cult_mono_go_up$result %>%
+  filter(source=="GO:BP") %>%
+  pull(term_name) %>%
+  strsplit(split=" ") %>%
+  unlist %>%
+  table
+cult_mono_go_up.bp.frq = cult_mono_go_up.bp.frq[!(names(cult_mono_go_up.bp.frq) %in% c("process","of","to"))]
+
+cult_mono_go_down.bp.frq = cult_mono_go_down$result %>%
+  filter(source=="GO:BP") %>%
+  pull(term_name) %>%
+  strsplit(split=" ") %>%
+  unlist %>%
+  table
+cult_mono_go_down.bp.frq = cult_mono_go_down.bp.frq[!(names(cult_mono_go_down.bp.frq) %in% c("process","of","to"))]
+
+library(wordcloud)
+library(RColorBrewer)
+
+wordcloud(words = names(cult_mono_go_up.bp.frq),
+          freq = cult_mono_go.bp.frq,
+          min.freq = 1,
+          max.words=100,
+          random.order=FALSE,
+          rot.per=0.35, 
+          colors=brewer.pal(8, "Dark2"))
+
+wordcloud(words = names(cult_mono_go_down.bp.frq),
+          freq = cult_mono_go.bp.frq,
+          min.freq = 1,
+          max.words=100,
+          random.order=FALSE,
+          rot.per=0.35, 
+          colors=brewer.pal(8, "Dark2"))
+
+```
+
+
+Integrating across conditions and clustering
+
+```{r}
+
+gex.stims <- SplitObject(gex.cult, split.by = "stim")
+gex.stims <- lapply(X = gex.stims, FUN = function(x) {
+    x <- SCTransform(x)
+    x <- FindVariableFeatures(x, selection.method = "vst", nfeatures = 2000)
+})
+
+features <- SelectIntegrationFeatures(object.list = gex.stims)
+
+# find anchors
+gex.anchors <- FindIntegrationAnchors(object.list = gex.stims, anchor.features = features)
+
+# integrate data
+gex.combined <- IntegrateData(anchorset = gex.anchors)
+```
+
+
+Clustering integrated data
+
+```{r}
+
+DefaultAssay(gex.combined) <- "integrated"
+
+# gex.combined <- SCTransform(gex.combined)
+
+# gex.combined <- RunPCA(gex.combined, npcs = 100, verbose = FALSE)
+# 
+# ElbowPlot(gex.combined, ndims=50)
+# 
+# gex.combined <- RunUMAP(gex.combined, reduction = "pca", dims = 1:30)
+# gex.combined <- FindNeighbors(gex.combined, reduction = "pca", dims = 1:30)
+# gex.combined <- FindClusters(gex.combined, resolution = 0.5)
+
+gex.combined <- SCTransform(gex.combined, verbose = FALSE)
+gex.combined <- RunPCA(gex.combined, npcs = 30, verbose = FALSE)
+gex.combined <- RunUMAP(gex.combined, reduction = "pca", dims = 1:30)
+gex.combined <- FindNeighbors(gex.combined, reduction = "pca", dims = 1:30)
+gex.combined <- FindClusters(gex.combined, resolution = 0.4)
+
+
+DimPlot(gex.combined, reduction = "umap")
+DimPlot(gex.combined, reduction = "umap", group.by = "stim")
+
+DefaultAssay(gex.combined) <- "RNA"
+
+FeaturePlot(gex.combined, features = "CD14")
+
+```
+
+
+Analyze cells separately by condition
+
+```{r}
+
+Idents(gex.singlet) <- "stim"
+
+
+gex.stims <- lapply(X = gex.stims, FUN = function(x) {
+  x <- ScaleData(x, verbose = FALSE)
+  x <- RunPCA(x, npcs = 30, verbose = FALSE)
+  x <- RunUMAP(x, reduction = "pca", dims = 1:30)
+})
+
+
+# gex.stims = list()
+# gex.markers = list()
+# for (stim in stims){
+#   
+#   gex.stim <- subset(gex.singlet, idents = stim)
+#   
+#   # gex.stim <- NormalizeData(gex.stim, normalization.method = "LogNormalize", scale.factor = 10000)
+#   # 
+#   # gex.stim <- FindVariableFeatures(gex.stim, selection.method = "vst", nfeatures = 2000)
+#   # 
+#   # all.genes <- rownames(gex.stim)
+#   # gex.stim <- ScaleData(gex.stim, features = all.genes)
+#   
+#   gex.stim <- SCTransform(gex.stim, vars.to.regress = "sample", verbose=F)
+#   
+#   gex.stim <- RunPCA(gex.stim, features = VariableFeatures(object = gex.stim), npcs=100)
+#   
+#   gex.stim <- FindNeighbors(gex.stim, dims = 1:10)
+#   gex.stim <- FindClusters(gex.stim, resolution = 0.5)
+# 
+#   # run UMAP
+#   gex.stim <- RunUMAP(gex.stim, dims = 1:10)
+#   
+#   # get markers for genes
+#   gex.markers[[stim]] <- FindAllMarkers(gex.stim, only.pos = TRUE, min.pct = 0.25, logfc.threshold = 0.25)
+#   
+#   gex.stims[[stim]] <- gex.stim
+# }
+
+
+DimPlot(gex.stims[["unculture"]], reduction = "umap", split.by="sample")
+DoHeatmap(gex.stims[["unculture"]], features = jimmie.markers) + NoLegend()
+
+DimPlot(gex.stims[["Ctrl"]], reduction = "umap", split.by="sample")
+DoHeatmap(gex.stims[["Ctrl"]], features = jimmie.markers) + NoLegend()
+
+DimPlot(gex.stims[["LPS"]], reduction = "umap", split.by="sample")
+DoHeatmap(gex.stims[["LPS"]], features = jimmie.markers) + NoLegend()
+
+DimPlot(gex.stims[["PolyIc"]], reduction = "umap", split.by="sample")
+DoHeatmap(gex.stims[["PolyIc"]], features = jimmie.markers) + NoLegend()
+
+```
+
+
+Cluster uncultured cells
+
+```{r}
+
+set.seed(42)
+
+# set identity for removing uncultured cells
+Idents(gex.singlet) <- "stim"
+
+gex.uncult <- subset(gex.singlet, ident = "unculture")
+
+# SCTransform
+gex.uncult <- SCTransform (gex.uncult, verbose = F)
+
+# run PCA
+gex.uncult = RunPCA(gex.uncult, features = VariableFeatures(object = gex.uncult), npcs=100)
+
+DimPlot(gex.uncult, reduction = "pca", group.by = "sample")
+DimPlot(gex.uncult, reduction = "pca", group.by = "orig.ident")
+
+ElbowPlot(gex.uncult, ndims = 50)
+
+# cluster data
+gex.uncult = FindNeighbors(gex.uncult, dims = 1:30)
+gex.uncult = FindClusters(gex.uncult, resolution = 0.3)
+
+# run UMAP
+gex.uncult = RunUMAP(gex.uncult, dims = 1:30)
+#gex.uncult = RunTSNE(gex.uncult, dimms=1:30)
+
+DimPlot(gex.uncult, reduction = "umap")
+DimPlot(gex.uncult, reduction = "umap", group.by = "orig.ident")
+DimPlot(gex.uncult, reduction = "umap", group.by = "sample")
+DimPlot(gex.uncult, reduction = "umap", split.by = "sample")
+
+
+```
+
+
+DE of D1399 vs D1406 in uncultured monocytes
+
+```{r}
+
+gex.mono = subset(gex.uncult, subset = seurat_clusters %in% c(2,4))
+
+Idents(gex.mono) <- "sample"
+
+samp_uncult_mono_de = FindMarkers(object = gex.mono,
+                                  ident.1 = "D1399",
+                                  ident.2 = "D1406",
+                                  logfc.threshold = 0.25)
+
+samp_uncult_mono_go = gost(query = rownames(samp_uncult_mono_de),
+                           custom_bg = rownames(gex.mono),
+                           organism = "hsapiens")
+
+samp_uncult_mono_de_hisig = samp_uncult_mono_de %>%
+  filter(-log10(p_val) > 40)
+
+ggplot(samp_uncult_mono_de, aes(x=avg_log2FC, y=-log10(p_val))) +
+  geom_point() +
+  geom_text_repel(data=samp_uncult_mono_de_hisig, aes(x=avg_log2FC, y=-log10(p_val), label = rownames(samp_uncult_mono_de_hisig)), hjust = 0, nudge_x = 0.1, size=3) +
+  theme_classic(base_size=15)
+
+```
+
+
+Remove uncultured cells
+
+```{r}
+
+set.seed(42)
+
+# set identity for removing uncultured cells
+Idents(gex.singlet) <- "stim"
+
+gex.cult <- subset(gex.singlet, ident = "unculture", invert = T)
+
+# # log normalize
+# gex.cult <- NormalizeData(gex.cult, normalization.method = "LogNormalize", scale.factor = 10000)
+
+# SCTransform
+gex.cult <- SCTransform (gex.cult, verbose = F)
+
+# # find variable features
+# gex.cult <- FindVariableFeatures(gex.cult, selection.method = "vst", nfeatures = 2000)
+
+# # scale data
+# all.genes <- rownames(gex.cult)
+# gex.cult <- ScaleData(gex.cult, features = all.genes)
+
+# run PCA
+gex.cult = RunPCA(gex.cult, features = VariableFeatures(object = gex.cult), npcs=100)
+
+DimPlot(gex.cult, reduction = "pca", group.by = "stim")
+DimPlot(gex.cult, reduction = "pca", split.by = "sample")
+DimPlot(gex.cult, reduction = "pca", group.by = "orig.ident", shuffle = T)
+
+# gex.singlet = JackStraw(gex.singlet, num.replicate = 100, dims=100)
+# gex.singlet = ScoreJackStraw(gex.singlet, dims = 1:100)
+# 
+# JackStrawPlot(gex.singlet, dims = 1:100)
+
+ElbowPlot(gex.cult, ndims = 50)
+
+# cluster data
+gex.cult = FindNeighbors(gex.cult, dims = 1:30)
+gex.cult = FindClusters(gex.cult, resolution = 0.3)
+
+# run UMAP
+gex.cult = RunUMAP(gex.cult, dims = 1:30)
+#gex.cult = RunTSNE(gex.cult, dimms=1:30)
+
+DimPlot(gex.cult, reduction = "umap")
+DimPlot(gex.cult, reduction = "umap", group.by = "orig.ident")
+DimPlot(gex.cult, reduction = "umap", group.by = "stim")
+DimPlot(gex.cult, reduction = "umap", group.by = "sample")
+
+
+Idents(gex.cult) <- "seurat_clusters"
+DoHeatmap(gex.cult, features = jimmie.markers) + NoLegend()
+
+gex.cult.markers <- FindAllMarkers(gex.cult)
+
+FeaturePlot(gex.cult, features = "IL1B", split.by = "stim")
+
+```
+
+
+Differential expression among monocytes
+
+```{r}
+
+gex.mono = subset(gex.cult, subset = seurat_clusters %in% c(3,4))
+
+lps_mono_de = FindMarkers(object = gex.mono,
+                          ident.1 = "LPS",
+                          ident.2 = "Ctrl",
+                          logfc.threshold = 0.25)
+
+lps_mono_go = gost(query = rownames(lps_mono_de),
+                   custom_bg = rownames(gex.cult),
+                   organism = "hsapiens")
+                   
+
+polyic_mono_de = FindMarkers(object = gex.mono,
+                          ident.1 = "PolyIc",
+                          ident.2 = "Ctrl",
+                          logfc.threshold = 0.25)
+# first, assign cell-type clusters (broadly)
+
+
+# word cloud LPS
+lps_mono_go.bp.frq = lps_mono_go$result %>%
+  filter(source=="GO:BP") %>%
+  pull(term_name) %>%
+  strsplit(split=" ") %>%
+  unlist %>%
+  table
+lps_mono_go.bp.frq = lps_mono_go.bp.frq[!(names(lps_mono_go.bp.frq) %in% c("process","of","to"))]
+
+library(wordcloud)
+library(RColorBrewer)
+
+wordcloud(words = names(lps_mono_go.bp.frq),
+          freq = lps_mono_go.bp.frq,
+          min.freq = 1,
+          max.words=100,
+          random.order=FALSE,
+          rot.per=0.35, 
+          colors=brewer.pal(8, "Dark2"))
+
+```
+
+
+Differentially expressed cells betweenn conditions and clusters
+
+```{r}
+
+# create identities for cluster and stimulation
+gex.cult$cluster.stim <- paste(gex.cult$seurat_clusters, gex.cult$stim, sep = "_")
+
+Idents(gex.cult) <- "cluster.stim"
+DefaultAssay(gex.cult) <- "SCT"
+
+de_genes <- data.frame()
+for (i in 0:10){
+  
+  lps_de <- FindMarkers(gex.cult, ident.1 = paste(i, "LPS", sep="_"),
+                     ident.2 = paste(i, "Ctrl", sep="_")) %>%
+    rownames_to_column("gene")
+  
+  if (nrow(lps_de) > 0){
+    lps_de$cluster <- i
+    lps_de$condition <- "LPS"
+  }
+  
+  polyic_de <- FindMarkers(gex.cult, ident.1 = paste(i, "PolyIc", sep="_"),
+                     ident.2 = paste(i, "Ctrl", sep="_")) %>%
+    rownames_to_column("gene")
+
+  if (nrow(polyic_de) > 0){
+    polyic_de$cluster <- i
+    polyic_de$condition <- "LPS"
+  }
+  
+
+  de_genes <- rbind(de_genes, lps_de, polyic_de)
+}
+
+
+# sort genes by fold change
+de_genes.sort = de_genes %>%
+  group_by(gene) %>%
+  filter(abs(avg_log2FC)==max(abs(avg_log2FC))) %>%
+  pull(gene)
+
+Idents(gex.cult) <- "seurat_clusters"
+
+heatmaps = list()
+for (i in unique(de_genes$cluster)){
+  
+  gex.cult.sub = subset(gex.cult, ident = i)
+  de_genes.sub = de_genes %>%
+    filter(cluster==i)
+  
+  Idents(gex.cult.sub) <- "stim"
+  
+  heatmaps[[as.character(i)]] <- DoHeatmap(gex.cult.sub, features =
+                                             de_genes.sub$gene)
+}
+
+```
+
+
+Find marker clusters
+
+```{r}
+
+gex.markers <- FindAllMarkers(gex.cult, only.pos = TRUE, min.pct = 0.25, logfc.threshold = 0.25)
+
+top5 <- gex.markers %>% group_by(cluster) %>% top_n(n = 10, wt = avg_log2FC)
+DoHeatmap(gex.cult, features = top5$gene) + NoLegend()
+
+# display marker genes fromm Seurat
+FeaturePlot(gex.cult, features = c("CD14", "FCGR3A", "CD1C", "SERPINF1", "PRSS57", "CD40LG", "KLRB1", "BANK1", "MZB1"))
+
+```
+
+
+Expression of Poly-IC genes given to me by Fang
+
+```{r}
+
+polyic_genes = c("LRRC34","CYP3A7","RSAD2","APOBEC3A",
+                 "CD200R1L","HESX1","IFI44L","IFIT1B","USP18")
+
+polyic_genes = c("CCL8","ISG15","CXCL11","IFIT2","HERC5","IFIT3","CMPK2","IFI44","MX2")
+
+
+
+```
+
+
+Map between samples
+
+```{r}
+
+
+
+```
+
+
+Some QC
+
+```{r}
+
+# calcualte percent mitochondrial reads
+gex[["percent.mt"]] = PercentageFeatureSet(gex, pattern = "^MT-")
+VlnPlot(gex, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
+
+# retain cells with 200 < nFeature_RNA < 2500 and less than 5% mitochondrial readds
+FeatureScatter(gex, feature1 = "nCount_RNA", feature2 = "percent.mt")
+FeatureScatter(gex, feature1 = "nCount_RNA", feature2 = "nFeature_RNA")
+
+# filter
+gex = subset(gex, subset = nFeature_RNA > 200 & nFeature_RNA < 2500 & percent.mt < 5)
+
+# log normalize
+gex = NormalizeData(gex, normalization.method = "LogNormalize", scale.factor = 10000)
+
+# find variable features
+gex = FindVariableFeatures(gex, selection.method = "vst", nfeatures = 2000)
+
+# Identify the 10 most highly variable genes
+top10 = head(VariableFeatures(gex), 10)
+
+# plot variable features with and without labels
+plot1 = VariableFeaturePlot(gex)
+plot2 = LabelPoints(plot = plot1, points = top10, repel = TRUE)
+plot1 + plot2
+
+# scale data
+all.genes = rownames(gex)
+gex = ScaleData(gex, features = all.genes)
+
+# PCA
+gex = RunPCA(gex, features = VariableFeatures(object = gex), npcs=100)
+
+DimPlot(gex, reduction = "pca")
+
+VizDimLoadings(gex, dims = 1:2, reduction = "pca")
+
+gex = JackStraw(gex, num.replicate = 100, dims=100)
+gex = ScoreJackStraw(gex, dims = 1:100)
+
+JackStrawPlot(gex, dims = 1:100)
+
+ElbowPlot(gex)
+
+# cluster data
+gex = FindNeighbors(gex, dims = 1:50)
+gex = FindClusters(gex, resolution = 0.5)
+
+# run UMAP
+gex = RunUMAP(gex, dims = 1:50)
+
+DimPlot(gex, reduction = "umap")
+
+# find markers of cluster 1
+cluster1.markers = FindMarkers(gex, ident.1 = 1, min.pct = 0.25)
+head(cluster1.markers, n = 20)
+
+```
+
+
+
+Clustering on aggregated data
+
+1. Do cells cluster by lane?
+2. Can we infer anything about the clusters?
+
+```{r}
+
+# create Seurat object
+gex.aggr <- CreateSeuratObject(
+  counts = Read10X(data.dir = "aggr/tishkoff_pilot21/outs/count/filtered_feature_bc_matrix"),
+  project = "GEX_AGGR",
+  min.cells=3,
+  min.features=200)
+# add lane information
+gex.aggr$lane <- unlist(strsplit(colnames(gex.aggr), "-"))[c(FALSE,TRUE)] 
+
+# log-normalize
+gex.aggr <- NormalizeData(gex.aggr)
+
+
+# find variable features
+gex.aggr <- FindVariableFeatures(gex.aggr, selection.method = "vst", nfeatures = 2000)
+top10 <- head(VariableFeatures(gex.aggr), 10)
+plot1 <- VariableFeaturePlot(gex.aggr)
+plot2 <- LabelPoints(plot = plot1, points = top10, repel = TRUE)
+plot1 + plot2
+
+
+# scale data
+all.genes <- rownames(gex.aggr)
+gex.aggr <- ScaleData(gex.aggr, features = all.genes)
+
+
+# run PCA
+gex.aggr <- RunPCA(gex.aggr, features = VariableFeatures(object = gex.aggr))
+
+
+# jackstraw plot
+gex.aggr <- JackStraw(gex.aggr, num.replicate = 100)
+gex.aggr <- ScoreJackStraw(gex.aggr, dims = 1:20)
+
+JackStrawPlot(gex.aggr, dims = 1:15)
+
+
+# elbow plot
+ElbowPlot(gex.aggr, ndims = 50)
+
+
+#### clustering ####
+
+# consider 30 PCs
+gex.aggr <- FindNeighbors(gex.aggr, dims = 1:30)
+gex.aggr <- FindClusters(gex.aggr, resolution = 0.5)
+
+
+# run UMAP on 30 PCs
+gex.aggr <- RunUMAP(gex.aggr, dims = 1:30)
+DimPlot(gex.aggr, reduction = "umap")
+DimPlot(gex.aggr, reduction = "umap",
+        group.by = "lane",
+        shuffle=T) # plot by lane
+
+
+# plot fraction of clusters across lanes
+data.frame(cluster = gex.aggr$seurat_clusters,
+           lane = gex.aggr$lane) %>%
+  ggplot(aes(x=lane, fill=cluster)) +
+  geom_bar(position="fill") +
+  theme_classic(base_size=15)
+
+
+# plot by marker genes
+# get marker genes
+gex.aggr.markers <- FindAllMarkers(gex.aggr, only.pos = TRUE, min.pct = 0.25, logfc.threshold = 0.25)
+
+
+# heatmap of cluster genes
+top5 <- gex.aggr.markers %>% group_by(cluster) %>% top_n(n = 5, wt = avg_log2FC)
+top1 <- gex.aggr.markers %>% group_by(cluster) %>% top_n(n = 1, wt = avg_log2FC)
+rand_cells <- sample(colnames(gex.aggr), 5000)
+DoHeatmap(gex.aggr, features = top5$gene, cells = rand_cells, 5000) + NoLegend()
+
+FeaturePlot(gex.aggr, features = top1$gene, cells = rand_cells)
+
+lm22 <- read_tsv("LM22.txt")
+names(lm22) = make.names(names(lm22))
+
+
+
+foo = rep("other", 15)
+foo[c(9, 10)+1] = "Monocyte"
+names(foo) = as.character(0:14)
+gex.aggr$monocyte <- foo[gex.aggr$seurat_clusters]
+
+```
+
+

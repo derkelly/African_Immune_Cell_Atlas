@@ -1,0 +1,217 @@
+---
+title: "pilot 4"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r libraries}
+library(Matrix)
+library(Seurat)
+library(tidyverse)
+library(ggplot2)
+library(patchwork)
+library(gprofiler2)
+```
+
+
+## UMI counts
+
+Code adapted from https://satijalab.org/seurat/v3.1/hashing_vignette.html
+
+Functions for manipulating barcodes
+
+```{r}
+
+# get the stem of the barcode (i.e. exclude additional identifiers)
+get_stem <- function(bcs){ vapply(strsplit(bcs,"-"), `[`, 1, FUN.VALUE=character(1)) }
+
+# get barcodes whose sequence only occur once
+get_sngls <- function(bcs){
+  
+  bc_stem <- get_stem(bcs)
+  bc_counts <- table(bc_stem)
+  
+  return(bcs[bc_stem %in% names(bc_counts)[bc_counts==1]])
+}
+
+```
+
+
+## read in data
+
+```{r data}
+
+# code adapted from https://satijalab.org/seurat/v3.1/pbmc3k_tutorial.html
+
+# Load the PBMC dataset
+# load the hto info
+cite.list = list()
+cite.list.5k = list()
+hash.list = list()
+hash.list.5k = list()
+for (i in c(1,2)){
+
+  # cite-seq data
+  cite.gex <- Read10X(data.dir = paste0("count/no_force/tk_p4_A", i, "/outs/filtered_feature_bc_matrix"))
+  cite.gex.5k <- Read10X(data.dir = paste0("count/force5k/tk_p4_5k_A", i, "/outs/filtered_feature_bc_matrix"))
+  
+  # hashing data
+  hash.gex <- Read10X(data.dir = paste0("count/no_force/tk_p4_H", i, "/outs/filtered_feature_bc_matrix"))
+  hash.gex.5k <- Read10X(data.dir = paste0("count/force5k/tk_p4_5k_H", i, "/outs/filtered_feature_bc_matrix"))
+  
+  # remove well info
+  colnames(cite.gex) <- get_stem(colnames(cite.gex))
+  colnames(cite.gex.5k) <- get_stem(colnames(cite.gex.5k))
+  colnames(hash.gex) <- get_stem(colnames(hash.gex))
+  colnames(hash.gex.5k) <- get_stem(colnames(hash.gex.5k))
+  
+  # add antibody information
+  cite.adt <- Read10X(data.dir = paste0("citeseqcount/A",i,"_ADT/umi_count"), gene.column=1)
+  cite.adt.5k <- Read10X(data.dir = paste0("citeseqcount/A",i,"_ADT_5k/umi_count"), gene.column=1)
+
+  # # remove unmapped
+  # hto.data <- hto.data[!(rownames(hto.data)=="unmapped"),]
+  # # rename columns to include the lane
+  # colnames(hto.data) <- get_stem(colnames(hto.data))
+  # 
+  # gex.data <- gex.data[, colnames(gex.data) %in% colnames(hto.data)]
+  # hto.data <- hto.data[, colnames(hto.data) %in% colnames(gex.data)]
+
+  cite <- CreateSeuratObject(cite.gex, project=paste0("A",i))
+  adt <- CreateAssayObject(cite.adt)
+  cite[["ADT"]] <- adt
+  
+  cite.5k <- CreateSeuratObject(cite.gex.5k, project=paste0("A",i))
+  adt.5k <- CreateAssayObject(cite.adt.5k)
+  cite.5k[["ADT"]] <- adt.5k
+  
+  hash <- CreateSeuratObject(hash.gex, project=paste0("H",i))
+  hash.5k <- CreateSeuratObject(hash.gex.5k, project=paste0("H",i))
+
+  # gex <- NormalizeData(gex, assay = "HTO", normalization.method = "CLR")
+  # 
+  # gex <- HTODemux(gex, assay = "HTO", positive.quantile = 0.99)
+  # # gex <- MULTIseqDemux(gex, assay = "HTO", autoThresh = T)
+  # # x = as.character(gex$MULTI_ID)
+  # # gex$MULTI_ID.global <- ifelse(x %in% c("Doublet","Negative"), x, "Singlet")
+  # 
+  # Idents(gex) <- "HTO_classification.global"
+
+  cite.list[[i]] <- cite
+  cite.list.5k[[i]] <- cite.5k
+  
+  hash.list[[i]] <- hash
+  hash.list.5k[[i]] <- hash.5k
+}
+
+cite <- merge(cite.list[[1]], cite.list[[2]], add.cell.ids = c("A1", "A2"))
+cite.5k <- merge(cite.list.5k[[1]], cite.list.5k[[2]], add.cell.ids = c("A1", "A2"))
+
+hash <- merge(hash.list[[1]], hash.list[[2]], add.cell.ids = c("H1", "H2"))
+hash.5k <- merge(hash.list.5k[[1]], hash.list.5k[[2]], add.cell.ids = c("H1", "H2"))
+
+
+VlnPlot(cite.5k, features = "nCount_RNA", pt.size = 0.01, log = TRUE)
+
+
+# HTOHeatmap(gex, assay = "HTO", ncells = 5000)
+# 
+# 
+# # add sample and stim information
+# samp_stim = data.frame(HTO_maxID=gex$HTO_maxID) %>% 
+#   separate(HTO_maxID, into=c("sample","stim","bc"), sep="-")
+# 
+# gex$sample = samp_stim$sample
+# gex$stim = samp_stim$stim
+# 
+# 
+# # get singlets
+# gex.singlet <- subset(gex, idents = "Singlet")
+
+```
+
+
+# dimensionality reduction
+
+```{r}
+
+cite[["percent.mt"]] = PercentageFeatureSet(cite, pattern = "^MT-")
+cite.5k[["percent.mt"]] = PercentageFeatureSet(cite.5k, pattern = "^MT-")
+hash[["percent.mt"]] = PercentageFeatureSet(hash, pattern = "^MT-")
+hash.5k[["percent.mt"]] = PercentageFeatureSet(hash.5k, pattern = "^MT-")
+
+set.seed(42)
+
+# SCTransform
+cite <- SCTransform(cite, vars.to.regress = "percent.mt")
+# cite.5k = NormalizeData(cite.5k, normalization.method = "LogNormalize", scale.factor = 10000)
+cite.5k <- SCTransform(cite.5k, vars.to.regress = "percent.mt")
+hash <- SCTransform(hash, vars.to.regress = "percent.mt")
+hash.5k <- SCTransform(hash.5k, vars.to.regress = "percent.mt")
+
+# run PCA
+cite = RunPCA(cite, npcs=100)
+cite.5k = RunPCA(cite.5k, npcs=100)
+hash = RunPCA(hash, npcs=100)
+hash.5k = RunPCA(hash.5k, npcs=100)
+
+
+ElbowPlot(cite, ndims = 50)
+ElbowPlot(hash, ndims = 50)
+
+cite <- FindNeighbors(cite, dims = 1:20)
+cite <- FindClusters(cite, resolution = 0.3)
+
+cite.5k <- FindNeighbors(cite.5k, dims = 1:20)
+cite.5k <- FindClusters(cite.5k, resolution = 0.3)
+
+hash <- FindNeighbors(hash, dims = 1:20)
+hash <- FindClusters(hash, resolution = 0.3)
+
+hash.5k <- FindNeighbors(hash.5k, dims = 1:20)
+hash.5k <- FindClusters(hash.5k, resolution = 0.3)
+
+# run UMAP
+cite <- RunUMAP(cite, dims = 1:20)
+cite.5k <- RunUMAP(cite.5k, dims = 1:20)
+hash <- RunUMAP(hash, dims = 1:20)
+hash.5k <- RunUMAP(hash.5k, dims = 1:20)
+
+cite$lognCount_RNA = log(cite$nCount_RNA)
+cite.5k$lognCount_RNA = log(cite.5k$nCount_RNA)
+hash$lognCount_RNA = log(hash$nCount_RNA)
+hash.5k$lognCount_RNA = log(hash.5k$nCount_RNA)
+
+
+DimPlot(cite, reduction = "umap")
+FeaturePlot(cite, features = "lognCount_RNA")
+DimPlot(cite.5k, reduction = "umap")
+FeaturePlot(cite.5k, features = "lognCount_RNA")
+DimPlot(hash, reduction = "umap")
+FeaturePlot(hash, features = "lognCount_RNA")
+DimPlot(hash.5k, reduction = "umap")
+FeaturePlot(hash.5k, features = "lognCount_RNA")
+
+jimmie.markers = c("CD14","S100A9","CTSS","FCGR3A", "CDKN1C", "FCER1A", "CD1C", "HLA-DQA1", "JCHAIN", "PLD4", "SERPINF1", "LILRA4", "PRSS57", "SOX4", "STMN1", "TOP2A", "CD3E", "CD3A", "CD38", "CD40LG", "CCR7", "IL7R", "RTKN2", "FOXP3", "PRF1", "GZMH", "GZMB", "GZMK", "KLRB1", "GNLY", "NKG7", "CD79A", "MZB1", "IGLL5", "BANK1", "CD19", "MS4A1")
+
+DoHeatmap(cite, features = jimmie.markers) + NoLegend()
+DoHeatmap(cite.5k, features = jimmie.markers) + NoLegend()
+DoHeatmap(hash, features = jimmie.markers) + NoLegend()
+DoHeatmap(hash.5k, features = jimmie.markers) + NoLegend()
+
+cite.5k$cell = cite.5k$nCount_RNA > min(cite$nCount_RNA)
+hash.5k$cell = hash.5k$nCount_RNA > min(hash$nCount_RNA)
+
+```
+
+
+## differential expression
+
+```{r}
+Idents(cite.5k) <- "cell"
+cite.cell.de.markers <- FindMarkers(cite.5k, ident.1 = T, ident.2 = F)
+
+```

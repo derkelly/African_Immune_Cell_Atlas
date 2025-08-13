@@ -1,0 +1,1808 @@
+---
+title: "pilot5"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+Load libraries
+
+```{r}
+library(Matrix)
+library(Seurat)
+library(SeuratData)
+library(tidyverse)
+library(sctransform)
+library(gprofiler2)
+library(ggrepel)
+library(purrr)
+```
+
+
+Useful functions and data
+
+```{r}
+
+# get the stem of the barcode (i.e. exclude additional identifiers)
+get_stem <- function(bcs){ vapply(strsplit(bcs,"-"), `[`, 1, FUN.VALUE=character(1)) }
+
+# get barcodes whose sequence only occur once
+get_sngls <- function(bcs){
+  
+  bc_stem <- get_stem(bcs)
+  bc_counts <- table(bc_stem)
+  
+  return(bcs[bc_stem %in% names(bc_counts)[bc_counts==1]])
+}
+
+jimmie.markers = c("CD14","S100A9","CTSS","FCGR3A", "CDKN1C", "FCER1A", "CD1C", "HLA-DQA1", "JCHAIN", "PLD4", "SERPINF1", "LILRA4", "PRSS57", "SOX4", "STMN1", "TOP2A", "CD3E", "CD3A", "CD38", "CD40LG", "CCR7", "IL7R", "RTKN2", "FOXP3", "PRF1", "GZMH", "GZMB", "GZMK", "KLRB1", "GNLY", "NKG7", "CD79A", "MZB1", "IGLL5", "BANK1", "CD19", "MS4A1")
+
+```
+
+
+Read in data
+
+```{r}
+
+gex.list = list()
+for (i in 1:4){
+  
+  gex.name = paste0("L", i)
+
+  # read in gene expression data
+  gex_raw <- Read10X(data.dir = paste0("count/tk_p6_L", i,
+                                       "/outs/filtered_feature_bc_matrix"))
+  # rename columns to exclude the trailing number
+  colnames(gex_raw) <- get_stem(colnames(gex_raw))
+  
+  # read in HTO data
+  hto_raw <- Read10X(data.dir = paste0("citeseqcount/L", i, "_HTO/umi_count"),
+                     gene.column=1)
+  hto_raw <- hto_raw[!(rownames(hto_raw)=="unmapped"),] # remove unmapped counts
+  
+  # select only those cells in GEx that are also in the HTO data
+  barcodes <- intersect(colnames(hto_raw), colnames(gex_raw))
+  gex_raw <- gex_raw[,barcodes]
+  
+  gex <- CreateSeuratObject(gex_raw, project=paste0("L",i))
+  gex[["percent.mt"]] <- PercentageFeatureSet(gex, pattern = "^MT-")
+  hto <- CreateAssayObject(hto_raw)
+  gex[["HTO"]] <- hto
+  
+  gex <- NormalizeData(gex, assay = "HTO", normalization.method = "CLR")
+  
+  gex <- HTODemux(gex, assay = "HTO")
+  # gex <- MULTIseqDemux(gex, assay = "HTO", autoThresh = T)
+  # x = as.character(gex$MULTI_ID)
+  # gex$MULTI_ID.global <- ifelse(x %in% c("Doublet","Negative"), x, "Singlet")
+  
+  # Idents(gex) <- "HTO_classification.global"
+  # 
+  # HTOHeatmap(gex, assay = "HTO", ncells = 5000)
+  
+  # add sample and stim information
+  samp_stim = data.frame(HTO_maxID=gex$HTO_maxID) %>% 
+    separate(HTO_maxID, into=c("sample","stim","bc"), sep="-")
+  
+  gex$sample = samp_stim$sample
+  gex$stim = samp_stim$stim
+  
+  # # get nd584s
+  # gex.singlet <- subset(gex, idents = "Singlet")
+  # 
+  # # get mitochondrial amount
+  # gex.singlet[["percent.mt"]] = PercentageFeatureSet(gex.singlet, pattern = "^MT-")
+  # 
+  # gex.singlet$lane = gex.name
+  
+  # gex.singlet <- SCTransform(gex.singlet, vars.to.regress = "percent.mt")
+  # gex.list[[gex.name]] = gex.singlet
+  gex.list[[gex.name]] = gex
+
+}
+
+VlnPlot(gex.singlet, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
+
+```
+
+
+1. Naive clustering of L1 and L2, coloring by sample and condition
+
+```{r}
+
+gex.12 <- Reduce(merge,
+                   lapply(gex.list[c("L1", "L2")], # select cells from lanes 1 and 2
+                          function(x) subset(x, HTO_classification.global=="Singlet" & # select singlet cells
+                                               nFeature_RNA > 200 & nFeature_RNA < 2500 & # filter out cells with low and high genes
+                                               percent.mt < 10))) # filter based on mitochondrial reads
+
+gex.12 <- SCTransform(gex.12, method = "glmGamPoi", vars.to.regress = "percent.mt")
+gex.12 <- RunPCA(gex.12, npcs=100)
+
+ElbowPlot(gex.12, ndims = 50)
+
+gex.12 <- RunUMAP(gex.12, dims = 1:30)
+
+Idents(gex.12) = "stim"
+
+DimPlot(gex.12, reduction = "umap", split.by = "sample")
+
+gex.12 <- FindNeighbors(gex.12, dims = 1:30)
+gex.12 <- FindClusters(gex.12, resolution = 0.5)
+
+DoHeatmap(gex.12, cells = sample(colnames(gex.12), size=5000), features = jimmie.markers)
+
+FeaturePlot(gex.12, features = c("GNLY","IL7R"))
+
+
+
+
+
+# plot Ctrl and LPS
+gex.12cl <- Reduce(merge,
+                   lapply(gex.list[c("L1", "L2")], # select cells from lanes 1 and 2
+                          function(x) subset(x, HTO_classification.global=="Singlet" & # select singlet cells
+                                               nFeature_RNA > 200 & nFeature_RNA < 2500 & # filter out cells with low and high genes
+                                               stim %in% c("Ctrl","LPS") &
+                                               percent.mt < 10))) # filter based on mitochondrial reads
+
+gex.12cl <- SCTransform(gex.12cl, method = "glmGamPoi", vars.to.regress = "percent.mt")
+gex.12cl <- RunPCA(gex.12cl, npcs=100)
+
+ElbowPlot(gex.12cl, ndims = 50)
+
+gex.12cl <- RunUMAP(gex.12cl, dims = 1:30)
+
+Idents(gex.12cl) = "stim"
+
+DimPlot(gex.12cl, reduction = "umap", split.by = "sample")
+
+# Test DE in monocytes
+gex.12.7 = subset(gex.12, subset = seurat_clusters==7)
+gex.12.7 <- NormalizeData(gex.12.7)
+
+gex.12.7.fulani = subset(gex.12, subset = seurat_clusters==7 & sample=="D0741")
+gex.12.7.fulani <- NormalizeData(gex.12.7.fulani)
+
+DefaultAssay(gex.12.7) = "RNA"
+Idents(gex.12.7) = "stim"
+
+mono.lps.de.markers.12 <- FindMarkers(gex.12.7, ident.1 = "LPS", ident.2 = "Ctrl", logfc.threshold = 0)
+mono.ifn.de.markers.12 <- FindMarkers(gex.12.7, ident.1 = "IFN", ident.2 = "Ctrl", logfc.threshold = 0)
+
+Idents(gex.12.7.fulani) = "sample"
+
+mono.lps.ifn.de.markers.12 = mono.lps.de.markers.12 %>%
+  rownames_to_column("gene") %>%
+  select(gene, lps_fc = avg_log2FC, lps_p = p_val_adj) %>%
+  merge(mono.ifn.de.markers.12 %>%
+          rownames_to_column("gene") %>%
+          select(gene, ifn_fc = avg_log2FC, ifn_p = p_val_adj))
+
+mono.lps.ifn.de.markers.12$lps_fc[is.infinite(mono.lps.ifn.de.markers.12$lps_fc)] = -1000
+mono.lps.ifn.de.markers.12$ifn_fc[is.infinite(mono.lps.ifn.de.markers.12$ifn_fc)] = -1000
+
+
+ggplot(mono.lps.ifn.de.markers.12, aes(x = lps_fc, y = ifn_fc)) +
+  geom_point() +
+  geom_text_repel(data = mono.lps.ifn.de.markers.12 %>%
+                     filter(ifn_fc > 2 | lps_fc > 2),
+                   aes(x = lps_fc, y = ifn_fc, label = gene)) +
+  geom_abline(slope = 1, intercept = 0, linetype="dashed") +
+  coord_fixed() +
+  # geom_smooth(method = lm) +
+  theme_bw() +
+  ggtitle("Libraries 1 + 2 LPS-Ctrl vs IFNB-Ctrl")
+
+library(gprofiler2)
+
+mono.lps.go.12 = gost(query = mono.lps.ifn.de.markers.12$gene[mono.lps.ifn.de.markers.12$lps_p < 0.05], custom_bg = rownames(gex.12.7))
+
+mono.ifn.go.12 = gost(query = mono.lps.ifn.de.markers.12$gene[mono.lps.ifn.de.markers.12$ifn_p < 0.05], custom_bg = rownames(gex.12.7))
+
+
+# Test DE in T/NK cells
+gex.12.5 = subset(gex.12, subset = seurat_clusters %in% c(0:5))
+gex.12.5 <- NormalizeData(gex.12.5)
+
+Idents(gex.12.5) <- "stim"
+
+nkt.lps.de.markers.12 <- FindMarkers(gex.12.5, ident.1 = "LPS", ident.2 = "Ctrl", logfc.threshold = 0)
+nkt.ifn.de.markers.12 <- FindMarkers(gex.12.5, ident.1 = "IFN", ident.2 = "Ctrl", logfc.threshold = 0)
+
+nkt.lps.ifn.de.markers.12 = nkt.lps.de.markers.12 %>%
+  rownames_to_column("gene") %>%
+  select(gene, lps_fc = avg_log2FC, lps_p = p_val_adj) %>%
+  merge(nkt.ifn.de.markers.12 %>%
+          rownames_to_column("gene") %>%
+          select(gene, ifn_fc = avg_log2FC, ifn_p = p_val_adj))
+
+ggplot(nkt.lps.ifn.de.markers.12, aes(x = lps_fc, y = ifn_fc)) +
+  geom_point() +
+  geom_text_repel(data = nkt.lps.ifn.de.markers.12 %>%
+                     filter(ifn_fc > 2 | lps_fc > 2),
+                   aes(x = lps_fc, y = ifn_fc, label = gene)) +
+  geom_abline(slope = 1, intercept = 0, linetype="dashed") +
+  # coord_fixed() +
+  # geom_smooth(method = lm) +
+  theme_bw(base_size = 12) +
+  ggtitle("Libraries 1 + 2 LPS-Ctrl vs IFNB-Ctrl")
+
+nkt.lps.go.12 = gost(query = nkt.lps.ifn.de.markers.12$gene[nkt.lps.ifn.de.markers.12$lps_p < 0.05], custom_bg = rownames(gex.12.5))
+
+nkt.ifn.go.12 = gost(query = nkt.lps.ifn.de.markers.12$gene[nkt.lps.ifn.de.markers.12$ifn_p < 0.05], custom_bg = rownames(gex.12.5))
+
+```
+
+
+1a. DE between LPS or IFN-B and Ctrl, show correlation in effect sizes for NK/T cells and myeloid
+
+```{r}
+
+# run differential expression between 'cond' and Ctrl for a given cell type,
+# individual, and condition
+run_de_sub <- function(samp, ct, cond){
+  
+  data = gex.12
+
+  clusts = 0:5
+  if (ct == "Myeloid"){
+    clusts = c(7)
+  }
+  
+  # subset data
+  data.sub <- subset(data, seurat_clusters %in% clusts & sample == samp)
+
+  # normalize data
+  data.sub <- NormalizeData(data.sub)
+  Idents(data.sub) <- "stim"
+
+  # run DE between condition and Ctrl
+  foo = FindMarkers(data.sub, ident.1 = cond, ident.2 = "Ctrl", logfc.threshold = 0) %>%
+    mutate(sample = samp,
+           stim = cond,
+           ctype = ct) %>%
+    rownames_to_column("gene")  
+}
+
+# get all pairwise combinations of 
+samp_ctype_clusts_ct.df = cross_df(list(samp = c("D0109","D0741","D0959"),
+                                        cond = c("LPS","IFN"),
+                                        ct = c("Myeloid","NKT_Cells")))
+
+de.dfs <- mapply(FUN = "run_de_sub",
+                 samp_ctype_clusts_ct.df$samp,
+                 samp_ctype_clusts_ct.df$ct,
+                 samp_ctype_clusts_ct.df$cond)
+
+de.df = data.frame()
+for (samp in c(1:12)){
+  
+  de.df.tmp = data.frame(gene = de.dfs[["gene",samp]],
+                         avg_log2FC = de.dfs[["avg_log2FC",samp]],
+                         p_val_adj = de.dfs[["p_val_adj",samp]],
+                         sample = de.dfs[["sample",samp]],
+                         stim = de.dfs[["stim",samp]],
+                         ctype = de.dfs[["ctype",samp]])
+  de.df = rbind(de.df, de.df.tmp)
+}
+
+
+foo = de.df %>%
+  filter(ctype=="Myeloid" & stim=="LPS") %>%
+  select(gene, avg_log2FC, sample) %>%
+  pivot_wider(names_from = sample, values_from = avg_log2FC)
+
+bar = de.df %>%
+  filter(ctype=="NKT_Cells" & stim=="IFN") %>%
+  select(gene, avg_log2FC, sample) %>%
+  pivot_wider(names_from = sample, values_from = avg_log2FC)
+
+
+foo1 = foo %>%
+  gather(key = pop2, value = avg_log2_FC, -c(gene, D0959)) %>%
+  filter(!(pop2=="D0959")) %>%
+  mutate(pop2 = ifelse(pop2=="D0741", "Fulani", "CRHG")) %>%
+  dplyr::rename(Tikari = D0959)
+
+ggplot(foo1, aes(x = Tikari, y = avg_log2_FC)) +
+  geom_point(alpha = 0.8) +
+  geom_text_repel(data = foo1 %>%
+                    filter((Tikari > 3.5 & pop2=="Fulani") |
+                             (avg_log2_FC > 5 & pop2=="CRHG")),
+                  aes(x = Tikari, y = avg_log2_FC, label = gene),
+                  size = 5) +
+  geom_abline(intercept = 0, slope = 1, linetype = "dashed") +
+  theme_bw(base_size = 15) +
+  facet_grid(. ~ pop2) +
+  ggtitle("Myeloid reponse to LPS")
+
+
+bar1 = bar %>%
+  gather(key = pop2, value = avg_log2_FC, -c(gene, D0959)) %>%
+  filter(!(pop2=="D0959")) %>%
+  mutate(pop2 = ifelse(pop2=="D0741", "Fulani", "CRHG")) %>%
+  dplyr::rename(Tikari = D0959)
+
+ggplot(bar1, aes(x = Tikari, y = avg_log2_FC)) +
+  geom_point(alpha = 0.8) +
+  geom_text_repel(data = bar1 %>%
+                    filter(Tikari > 3),
+                  aes(x = Tikari, y = avg_log2_FC, label = gene),
+                  size = 5) +
+  geom_abline(intercept = 0, slope = 1, linetype = "dashed") +
+  theme_bw(base_size = 15) +
+  facet_grid(. ~ pop2) +
+  ggtitle("Lymphoid reponse to IFNB")
+
+
+  
+
+
+# get de between conditions for each myloid subsets for each sample
+de.12 = list()
+for (samp in c("D0109","D0741","D0959")){
+  
+  gex.12.myl[[samp]]<- subset(gex.12, seurat_clusters==7 & sample==samp)
+}
+
+# get lymphoid subsets for each sample
+gex.12.nkt = list()
+for (samp in c("D0109","D0741","D0959")){
+  
+  gex.12.nkt[[samp]]<- subset(gex.12, seurat_clusters %in% c(0:5))& sample==samp)
+}
+
+de.12.myl = list()
+
+
+
+```
+
+1a1. Cluster only one sample
+
+```{r}
+
+gex.12.crhg <- subset(gex.12, sample=="D0109")
+
+Idents = "stim"
+
+DimPlot(gex.12.crhg, reduction="umap", split.by = "stim")
+
+```
+
+1b. compare expression at baseline
+
+```{r}
+bar.go = gost(bar$gene[order(-bar$D0959)], ordered_query = T, custom_bg = bar$gene)
+
+mono.fulani_tikari.go = 
+
+de_genes = bar %>%
+  filter(D0959 > 2) %>%
+  pull(gene)
+
+gex.12.mono = subset(gex.12, seurat_clusters == 7 & stim=="Ctrl")
+DefaultAssay(gex.12.mono) = "RNA"
+gex.12.mono <- NormalizeData(gex.12.mono)
+gex.12.mono_avg = AverageExpression(gex.12.mono, assays = "RNA", group.by = "sample")
+
+
+gex.12.mono_avg$RNA %>%
+  as.data.frame %>%
+  rownames_to_column("gene") %>%
+  mutate(sum_avg = D0109 + D0741 + D0959,
+         DE_gene = gene %in% de_genes) %>%
+  dplyr::rename(Fulani = D0741, Tikari = D0959) %>%
+  arrange(DE_gene) %>%
+  filter(!(sum_avg == 0)) %>%
+  ggplot(aes(x = log2(Tikari), y = log2(Fulani), color = DE_gene, size = DE_gene)) +
+    geom_point(alpha = 0.5) +
+    theme_bw(base_size = 15) +
+  geom_abline(intercept = 0, slope = 1, linetype = "dashed", color = "blue") +
+  scale_color_manual(values = c("black","red")) +
+  ggtitle("Expression of myeloid cells at baseline")
+
+gex.12.mono_avg$RNA %>%
+  as.data.frame %>%
+  mutate(sum_avg = D0109 + D0741 + D0959) %>%
+  filter(!(sum_avg == 0)) %>%
+  ggplot(aes(x = log2(D0109), y = log2(D0741))) +
+    geom_point() +
+    theme_bw()
+
+
+de_genes = bar %>%
+  filter(D0959 > 2) %>%
+  pull(gene)
+
+gex.12.mono = subset(gex.12, seurat_clusters == 7)
+DefaultAssay(gex.12.mono) = "RNA"
+gex.12.mono <- NormalizeData(gex.12.mono)
+gex.12.mono_avg = AverageExpression(gex.12.mono, assays = "RNA", group.by = c("sample","stim"))
+
+remove = apply(gex.12.mono_avg$RNA, 1, sum) == 0
+
+top_100 = unique(c(which(rank(-gex.12.mono_avg$RNA[,1]) < 101),
+            which(rank(-gex.12.mono_avg$RNA[,2]) < 101),
+            which(rank(-gex.12.mono_avg$RNA[,3]) < 101),
+            which(rank(-gex.12.mono_avg$RNA[,4]) < 101),
+            which(rank(-gex.12.mono_avg$RNA[,5]) < 101),
+            which(rank(-gex.12.mono_avg$RNA[,6]) < 101),
+            which(rank(-gex.12.mono_avg$RNA[,7]) < 101),
+            which(rank(-gex.12.mono_avg$RNA[,8]) < 101),
+            which(rank(-gex.12.mono_avg$RNA[,9]) < 101)))
+
+gex.12.mono_avg$RNA[top_100,] %>%
+  as.data.frame %>%
+  rownames_to_column("gene") %>%
+  gather(key = condition, value = avg_exp, -gene) %>%
+  ggplot(aes(x = gene, y = condition, fill = log2(avg_exp+1))) +
+    geom_tile()
+
+
+gex.12.mono_avg$RNA %>%
+  as.data.frame %>%
+  rownames_to_column("gene") %>%
+  mutate(sum_avg = D0109 + D0741 + D0959) %>%
+  filter(!(sum_avg == 0)) %>%
+  ggplot(aes(x = log2(D0109), y = log2(D0741), color = gene %in% de_genes)) +
+    geom_point() +
+    theme_bw()
+
+gex.12.mono_avg$RNA %>%
+  as.data.frame %>%
+  mutate(sum_avg = D0109 + D0741 + D0959) %>%
+  filter(!(sum_avg == 0)) %>%
+  ggplot(aes(x = log2(D0109), y = log2(D0741))) +
+    geom_point() +
+    theme_bw()
+
+```
+
+
+1c. Heatmap
+
+```{r}
+
+gex.12.mono <- subset(gex.12, seurat_clusters==7)
+gex.12.mono$sample[gex.12.mono$sample=="D0109"] = "CRHG"
+gex.12.mono$sample[gex.12.mono$sample=="D0741"] = "Fulani"
+gex.12.mono$sample[gex.12.mono$sample=="D0959"] = "Tikari"
+gex.12.mono <- NormalizeData(gex.12.mono)
+Idents(gex.12.mono) = "stim"
+gex.12.mono.de = FindMarkers(gex.12.mono, ident.1 = "LPS", ident.2 = "Ctrl")
+
+gex.12.mono.ctrl = subset(gex.12.mono, stim=="Ctrl")
+gex.12.mono.ctrl <- NormalizeData(gex.12.mono)
+Idents(gex.12.mono.ctrl) = "sample"
+gex.12.mono.ctrl.de = FindMarkers(gex.12.mono.ctrl, ident.1 = "Fulani", ident.2 = "Tikari", logfc.threshold = 0)
+
+
+gex.12.mono.ctrl.de.go = gost(query = rownames(gex.12.mono.ctrl.de[gex.12.mono.ctrl.de$p_val_adj < 0.01,]), custom_bg = rownames(gex.12.mono.ctrl.de))
+
+top_de_genes = gex.12.mono.de %>%
+  as.data.frame %>%
+  rownames_to_column("gene") %>%
+  arrange(-avg_log2FC) %>%
+  head(100) %>%
+  pull(gene)
+
+
+
+gex.12.mono_avg =  AverageExpression(gex.12.mono, assays = "RNA", group.by = c("sample","stim"), return.seurat = T)
+
+
+heat = heatmap(log2(gex.12.mono_avg$RNA[top_de_genes,]+1), scale = "none", Rowv = F, keep.dendro = T)
+
+row.clusters = as.hclust(heat$Rowv)
+clusts = cutree(row.clusters, k=3)
+
+clusts.go = gost(query = names(clusts[clusts==1]), custom_bg = names(clusts))
+
+gex.12.mono_avg_max = apply(gex.12.mono_avg$RNA, 1, max)
+gex.12.mono_avg_min = apply(gex.12.mono_avg$RNA, 1, min)
+gex.12.mono_avg_avg = apply(gex.12.mono_avg$RNA, 1, mean)
+
+gex.12.mono_max_diff = gex.12.mono_avg_max - gex.12.mono_avg_min
+
+
+gex.12.avg_stim = AverageExpression(gex.12, assays = "RNA", group.by = c("stim"))
+
+top_genes = gex.12.avg_stim
+
+```
+
+2. Do the same for L3 and L4
+
+```{r}
+
+gex.34 <- Reduce(merge,
+                 lapply(gex.list[c("L3", "L4")], # select cells from lanes 1 and 2
+                        function(x) subset(x, HTO_classification.global=="Singlet" & # select singlet cells
+                                             nFeature_RNA > 200 & nFeature_RNA < 2500 & # filter out cells with low and high genes
+                                             percent.mt < 10))) # filter based on mitochondrial reads
+
+gex.34 <- SCTransform(gex.34, method = "glmGamPoi", vars.to.regress = "percent.mt")
+gex.34 <- RunPCA(gex.34, npcs=100)
+
+ElbowPlot(gex.34, ndims = 50)
+
+gex.34 <- RunUMAP(gex.34, dims = 1:30)
+
+Idents(gex.34) = "stim"
+
+DimPlot(gex.34, reduction = "umap", split.by = "sample")
+
+gex.34 <- FindNeighbors(gex.34, dims = 1:30)
+gex.34 <- FindClusters(gex.34, resolution = 0.5)
+
+FeaturePlot(gex.34, features = "CD14")
+
+Idents(gex.34) = "seurat_clusters"
+
+DoHeatmap(gex.34, cells = sample(colnames(gex.34), size=5000), features = jimmie.markers)
+
+# DE in monocytes
+gex.34.8 = subset(gex.34, subset = seurat_clusters==8)
+gex.34.8 <- NormalizeData(gex.34.8)
+
+# DefaultAssay(gex.34.10) = "RNA"
+Idents(gex.34.8) = "stim"
+
+mono.lps.de.markers.34 <- FindMarkers(gex.34.8, ident.1 = "LPS", ident.2 = "Ctrl", logfc.threshold = 0)
+mono.ifn.de.markers.34 <- FindMarkers(gex.34.8, ident.1 = "IFN", ident.2 = "Ctrl", logfc.threshold = 0)
+
+mono.lps.ifn.de.markers.34 = mono.lps.de.markers.34 %>%
+  rownames_to_column("gene") %>%
+  select(gene, lps_fc = avg_log2FC, lps_p = p_val_adj) %>%
+  merge(mono.ifn.de.markers.34 %>%
+          rownames_to_column("gene") %>%
+          select(gene, ifn_fc = avg_log2FC, ifn_p = p_val_adj))
+
+# mono.lps.ifn.de.markers.34$lps_fc[is.infinite(mono.lps.ifn.de.markers$lps_fc)] = -1000
+# mono.lps.ifn.de.markers$ifn_fc[is.infinite(mono.lps.ifn.de.markers$ifn_fc)] = -1000
+
+
+ggplot(mono.lps.ifn.de.markers.34, aes(x = lps_fc, y = ifn_fc)) +
+  geom_point() +
+  geom_text_repel(data = mono.lps.ifn.de.markers.34 %>%
+                     filter(ifn_fc > 2 | lps_fc > 2),
+                   aes(x = lps_fc, y = ifn_fc, label = gene)) +
+  geom_abline(slope = 1, intercept = 0, linetype="dashed") +
+  coord_fixed() +
+  # geom_smooth(method = lm) +
+  theme_bw(base_size=12) +
+  ggtitle("Libraries 3 + 4 LPS-Ctrl vs IFNB-Ctrl")
+
+library(gprofiler2)
+
+mono.lps.go.34 = gost(query = mono.lps.ifn.de.markers.34$gene[mono.lps.ifn.de.markers.34$lps_p < 0.05], custom_bg = rownames(gex.34.10))
+
+mono.ifn.go.34 = gost(query = mono.lps.ifn.de.markers.34$gene[mono.lps.ifn.de.markers.34$ifn_p < 0.05], custom_bg = rownames(gex.34.10))
+
+# DE in NK/T
+gex.34.7 = subset(gex.34, subset = seurat_clusters %in% c(0:5,7))
+gex.34.7 <- NormalizeData(gex.34.7)
+
+# DefaultAssay(gex.34.10) = "RNA"
+Idents(gex.34.7) = "stim"
+
+nkt.lps.de.markers.34 <- FindMarkers(gex.34.7, ident.1 = "LPS", ident.2 = "Ctrl", logfc.threshold = 0)
+nkt.ifn.de.markers.34 <- FindMarkers(gex.34.7, ident.1 = "IFN", ident.2 = "Ctrl", logfc.threshold = 0)
+
+nkt.lps.ifn.de.markers.34 = nkt.lps.de.markers.34 %>%
+  rownames_to_column("gene") %>%
+  select(gene, lps_fc = avg_log2FC, lps_p = p_val_adj) %>%
+  merge(nkt.ifn.de.markers.34 %>%
+          rownames_to_column("gene") %>%
+          select(gene, ifn_fc = avg_log2FC, ifn_p = p_val_adj))
+
+# mono.lps.ifn.de.markers.34$lps_fc[is.infinite(mono.lps.ifn.de.markers$lps_fc)] = -1000
+# mono.lps.ifn.de.markers$ifn_fc[is.infinite(mono.lps.ifn.de.markers$ifn_fc)] = -1000
+
+
+ggplot(nkt.lps.ifn.de.markers.34, aes(x = lps_fc, y = ifn_fc)) +
+  geom_point() +
+  geom_text_repel(data = nkt.lps.ifn.de.markers.34 %>%
+                     filter(ifn_fc > 2 | lps_fc > 2),
+                   aes(x = lps_fc, y = ifn_fc, label = gene)) +
+  geom_abline(slope = 1, intercept = 0, linetype="dashed") +
+  # coord_fixed() +
+  # geom_smooth(method = lm) +
+  theme_bw(base_size=12) +
+  ggtitle("Libraries 3 + 4 LPS-Ctrl vs IFNB-Ctrl")
+
+library(gprofiler2)
+
+mono.lps.go.34 = gost(query = mono.lps.ifn.de.markers.34$gene[mono.lps.ifn.de.markers.34$lps_p < 0.05], custom_bg = rownames(gex.34.10))
+
+mono.ifn.go.34 = gost(query = mono.lps.ifn.de.markers.34$gene[mono.lps.ifn.de.markers.34$ifn_p < 0.05], custom_bg = rownames(gex.34.10))
+
+```
+
+
+2a. DE between LPS or IFN-B and Ctrl, show correlation in effect sizes for NK/T cells and myeloid
+
+```{r}
+
+# run differential expression between 'cond' and Ctrl for a given cell type,
+# individual, and condition
+run_de_sub <- function(samp, ct, cond){
+  
+  data = gex.34
+
+  clusts = 0:5
+  if (ct == "Myeloid"){
+    clusts = c(7)
+  }
+  
+  # subset data
+  data.sub <- subset(data, seurat_clusters %in% clusts & sample == samp)
+
+  # normalize data
+  data.sub <- NormalizeData(data.sub)
+  Idents(data.sub) <- "stim"
+
+  # run DE between condition and Ctrl
+  foo = FindMarkers(data.sub, ident.1 = cond, ident.2 = "Ctrl", logfc.threshold = 0) %>%
+    mutate(sample = samp,
+           stim = cond,
+           ctype = ct) %>%
+    rownames_to_column("gene")  
+}
+
+# get all pairwise combinations of 
+samp_ctype_clusts_ct.df = cross_df(list(samp = c("D0738","D0901"),
+                                        cond = c("LPS","IFN"),
+                                        ct = c("Myeloid","NKT_Cells")))
+
+de.dfs <- mapply(FUN = "run_de_sub",
+                 samp_ctype_clusts_ct.df$samp,
+                 samp_ctype_clusts_ct.df$ct,
+                 samp_ctype_clusts_ct.df$cond)
+
+de.df34 = data.frame()
+for (samp in c(1:8)){
+  
+  de.df.tmp = data.frame(gene = de.dfs[["gene",samp]],
+                         avg_log2FC = de.dfs[["avg_log2FC",samp]],
+                         p_val_adj = de.dfs[["p_val_adj",samp]],
+                         sample = de.dfs[["sample",samp]],
+                         stim = de.dfs[["stim",samp]],
+                         ctype = de.dfs[["ctype",samp]])
+  de.df34 = rbind(de.df34, de.df.tmp)
+}
+
+
+foo34 = de.df34 %>%
+  filter(ctype=="Myeloid" & stim=="LPS") %>%
+  select(gene, avg_log2FC, sample) %>%
+  pivot_wider(names_from = sample, values_from = avg_log2FC)
+
+bar34 = de.df34 %>%
+  filter(ctype=="NKT_Cells" & stim=="IFN") %>%
+  select(gene, avg_log2FC, sample) %>%
+  pivot_wider(names_from = sample, values_from = avg_log2FC)
+
+
+foo34 %>%
+  dplyr::rename(Tikari = D0901,
+                Fulani = D0738) %>%
+  ggplot(aes(x = Tikari, y = Fulani)) +
+  geom_point() +
+  geom_text_repel(data = foo34 %>%
+                    filter(D0901 > 1),
+                  aes(x = D0901, y = D0738, label = gene),
+                  size = 5) +
+  geom_abline(intercept = 0, slope = 1, linetype = "dashed") +
+  theme_bw(base_size = 15) +
+  # facet_grid(. ~ pop2) +
+  ggtitle("Myeloid reponse to LPS")
+
+
+bar34 %>%
+  dplyr::rename(Tikari = D0901,
+                Fulani = D0738) %>%
+  ggplot(aes(x = Tikari, y = Fulani)) +
+  geom_point() +
+  geom_text_repel(data = bar34 %>%
+                    filter(D0901 > 3.5),
+                  aes(x = D0901, y = D0738, label = gene),
+                  size = 5) +
+  geom_abline(intercept = 0, slope = 1, linetype = "dashed") +
+  theme_bw(base_size = 15) +
+  # facet_grid(. ~ pop2) +
+  ggtitle("Lymphoid reponse to IFNB")
+
+```
+
+3. Cluster all data together
+
+```{r}
+
+gex.merge <- Reduce(merge,
+                    lapply(gex.list, # select cells from lanes 1 and 2
+                           function(x) subset(x, HTO_classification.global=="Singlet" & # select singlet cells
+                                                nFeature_RNA > 200 & nFeature_RNA < 2500 & # filter out cells with low and high genes
+                                                percent.mt < 10))) # filter based on mitochondrial reads
+
+gex.merge <- SCTransform(gex.merge, method = "glmGamPoi", vars.to.regress = "percent.mt")
+gex.merge <- RunPCA(gex.merge, npcs=100)
+
+ElbowPlot(gex.merge, ndims = 50)
+
+gex.merge <- RunUMAP(gex.merge, dims = 1:30)
+
+# Idents(gex.merge) = "stim"
+Idents(gex.merge) = "orig.ident"
+
+DimPlot(gex.merge, reduction = "umap", split.by = "sample")
+DimPlot(gex.merge, reduction = "umap", group.by = "stim")
+DimPlot(gex.merge, reduction = "umap", group.by = "orig.ident")
+
+```
+
+
+1. Do samples show DE genes at baseline?
+
+To compare D1397 and ND584, I need to select A) Ctrl cells from B) the hash data
+that C) are singlets from D) lanes 1 and 2.
+
+```{r}
+
+gex.12hc <- Reduce(merge,
+                   lapply(gex.list[c("L1", "L2")], # select cells from lanes 1 and 2
+                          function(x) subset(x, HTO_classification.global=="Singlet" & # select singlet cells
+                                               stim=="Ctrl" & # select Ctrl cells
+                                               tech=="hash" & # select hashed cells
+                                               nFeature_RNA > 200 & nFeature_RNA < 2500 & # filter out cells with low and high genes
+                                               percent.mt < 10))) # filter based on mitochondrial reads
+
+# UMAP on Ctrl hash cells from L1 and L2
+gex.12hc <- SCTransform(gex.12hc, method = "glmGamPoi", vars.to.regress = "percent.mt")
+gex.12hc <- RunPCA(gex.12hc, npcs=100)
+
+ElbowPlot(gex.12hc, ndims = 50)
+
+gex.12hc <- RunUMAP(gex.12hc, dims = 1:30)
+
+DimPlot(gex.12hc, reduction = "umap", group.by = "sample")
+DimPlot(gex.12hc, reduction = "pca", group.by = "sample")
+
+
+# test differential expression between samples
+DefaultAssay(gex.12hc) <- "RNA"
+Idents(gex.12hc) <- "sample"
+gex.12hc <- NormalizeData(gex.12hc)
+gex.12hc.de_samp <- FindMarkers(gex.12hc,
+                                ident.1 = "ND584",
+                                ident.2 = "D1397", 
+                                logfc.threshold = 0) %>%
+  rownames_to_column("gene")
+
+gex.12hc.de_samp.go <- gost(query = gex.12hc.de_samp$gene[gex.12hc.de_samp$p_val_adj < 0.05],
+                            custom_bg = gex.12hc.de_samp$gene)
+
+ggplot(gex.12hc.de_samp, aes(x = avg_log2FC,
+                             y = -log10(p_val))) +
+  geom_point() +
+  geom_text_repel(data = gex.12hc.de_samp %>%
+                    filter(p_val < 10^-100),
+                  aes(x = avg_log2FC,
+                      y = -log10(p_val),
+                      label = gene)) +
+  theme_bw()
+
+gex.12hc.de_samp.gobp = gex.12hc.de_samp.go$result %>%
+  filter(source == "GO:BP") %>%
+  mutate(F_score = 2 * precision * recall / (precision + recall))
+
+gex.12hc.de_samp.gobp %>%
+  ggplot(aes(x = F_score, y = -log10(p_value))) +
+  geom_point() +
+  geom_text_repel(data = gex.12hc.de_samp.gobp %>%
+                    filter(p_value < 10^-8),
+                  aes(x = F_score,
+                      y = -log10(p_value),
+                      label = term_name)) +
+  theme_bw()
+
+# get genes on X chromosome
+gencode19 <- read_tsv("../../transcriptomics/eqtl/afr_wbrna/misc/gencode.v19.TSS.txt")
+
+
+```
+
+
+2. Do samples show differential activation?
+
+I now aim to compare the differential expression between Ctrl and LPS samples 
+for the African and fresh sample
+
+```{r}
+
+# first to extract data for samples
+gex.12h.nd584 <- Reduce(merge,
+                        lapply(gex.list[c("L1", "L2")], # select cells from lanes 1 and 2
+                               function(x) subset(x, HTO_classification.global=="Singlet" & # select singlet cells
+                                                    sample=="ND584" & # select ND584 sample
+                                                    tech=="hash" & # select hashed cells
+                                                    nFeature_RNA > 200 & nFeature_RNA < 2500 & # filter out cells with low and high genes
+                                                    percent.mt < 10))) # filter based on mitochondrial reads
+
+DefaultAssay(gex.12h.nd584) <- "RNA"
+Idents(gex.12h.nd584) <- "stim"
+gex.12h.nd584 <- NormalizeData(gex.12h.nd584)
+gex.12h.nd584.de_samp <- FindMarkers(gex.12h.nd584,
+                                     ident.1 = "LPS",
+                                     ident.2 = "Ctrl", 
+                                     logfc.threshold = 0) %>%
+  rownames_to_column("gene")
+gex.12h.nd584.exp <- apply(gex.12h.nd584@assays$RNA@counts, 1, mean)
+
+
+# repeat for D1397
+gex.12h.d1397 <- Reduce(merge,
+                        lapply(gex.list[c("L1", "L2")], # select cells from lanes 1 and 2
+                               function(x) subset(x, HTO_classification.global=="Singlet" & # select singlet cells
+                                                    sample=="D1397" & # select D1397 sample
+                                                    tech=="hash" & # select hashed cells
+                                                    nFeature_RNA > 200 & nFeature_RNA < 2500 & # filter out cells with low and high genes
+                                                    percent.mt < 10))) # filter based on mitochondrial reads
+
+DefaultAssay(gex.12h.d1397) <- "RNA"
+Idents(gex.12h.d1397) <- "stim"
+gex.12h.d1397 <- NormalizeData(gex.12h.d1397)
+gex.12h.d1397.de_samp <- FindMarkers(gex.12h.d1397,
+                                     ident.1 = "LPS",
+                                     ident.2 = "Ctrl", 
+                                     logfc.threshold = 0) %>%
+  rownames_to_column("gene")
+gex.12h.d1397.exp <- apply(gex.12h.d1397@assays$RNA@counts, 1, mean)
+
+gex.12h.d1397.nd584.exp <- data.frame(gene = names(gex.12h.d1397.exp),
+                                      d1397_gex = gex.12h.d1397.exp) %>%
+  merge(data.frame(gene = names(gex.12h.nd584.exp),
+                   nd584_gex = gex.12h.nd584.exp)) %>%
+  mutate(mean_gex = (d1397_gex + nd584_gex)/2)
+
+gex.12h.nd584.d1397.de_lps = gex.12h.nd584.de_samp %>%
+  select(gene, nd584_log2fc = avg_log2FC, nd584_padj = p_val_adj) %>%
+  merge(gex.12h.d1397.de_samp %>%
+          select(gene, d1397_log2fc = avg_log2FC, d1397_padj = p_val_adj)) %>%
+  merge(gex.12h.d1397.nd584.exp)
+
+ggplot(gex.12h.nd584.d1397.de_lps, aes(x=nd584_log2fc, y=d1397_log2fc, color = log2(mean_gex))) +
+  geom_point() +
+  scale_color_distiller(palette = "Spectral") +
+  geom_abline(intercept = 0, slope = 1, color = "red", linetype = "dashed") +
+  theme_bw()
+
+```
+
+
+3. Compare detection of marker genes
+
+```{r}
+
+# jimmie.markers.subset <- 
+
+# extract control hash cells for ND584 from lane 1
+gex.1hc.nd584 = subset(gex.12hc, sample=="ND584" & orig.ident=="L1")
+gex.2hc.nd584 = subset(gex.12hc, sample=="ND584" & orig.ident=="L2")
+
+# PCA for lane 1
+gex.1hc.nd584 <- SCTransform(gex.1hc.nd584, method = "glmGamPoi", vars.to.regress = "percent.mt")
+gex.1hc.nd584 <- RunPCA(gex.1hc.nd584, npcs=100)
+
+gex.1hc.nd584.marker_pcmax <- gex.1hc.nd584@reductions$pca@feature.loadings %>%
+  as.data.frame %>%
+  rownames_to_column("gene") %>%
+  filter(gene %in% jimmie.markers) %>%
+  column_to_rownames("gene") %>%
+  apply(., 1, function(x) max(abs(x)))
+
+
+# PCA for lane 2
+gex.2hc.nd584 <- SCTransform(gex.2hc.nd584, method = "glmGamPoi", vars.to.regress = "percent.mt")
+gex.2hc.nd584 <- RunPCA(gex.2hc.nd584, npcs=100)
+
+gex.2hc.nd584.marker_pcmax <- gex.2hc.nd584@reductions$pca@feature.loadings %>%
+  as.data.frame %>%
+  rownames_to_column("gene") %>%
+  filter(gene %in% jimmie.markers) %>%
+  column_to_rownames("gene") %>%
+  apply(., 1, function(x) max(abs(x)))
+
+# what fraction of genes are non-zero?
+gex.1hc.nd584.frac_nonzero <- apply(gex.1hc.nd584@assays$RNA@counts, 1, function(x) mean(x > 0))
+gex.2hc.nd584.frac_nonzero <- apply(gex.2hc.nd584@assays$RNA@counts, 1, function(x) mean(x > 0))
+
+gex.1hc.nd584.frac_nonzero[jimmie.markers]
+gex.2hc.nd584.frac_nonzero[jimmie.markers]
+
+# 
+
+# plot the genes
+enframe(gex.1hc.nd584.marker_pcmax, name = "gene", value = "max_pc_L1") %>%
+  merge(enframe(gex.2hc.nd584.marker_pcmax, name = "gene", value = "max_pc_L2")) %>%
+  ggplot(aes(x = max_pc_L1, y = max_pc_L2, label = gene)) +
+  geom_text_repel(max.overlaps = 100) +
+  geom_abline(intercept = 0, slope = 1, linetype = "dashed", color = "red") +
+  coord_fixed() +
+  theme_bw()
+
+
+# let's try out a crazy plot
+gex.1hc.nd584@reductions$pca@feature.loadings %>%
+  as.data.frame %>%
+  rownames_to_column("gene") %>%
+  filter(gene %in% jimmie.markers) %>%
+  gather(key = "PC", value = "loading_L1", -gene) %>%
+  merge(gex.2hc.nd584@reductions$pca@feature.loadings %>%
+          as.data.frame %>%
+          rownames_to_column("gene") %>%
+          filter(gene %in% jimmie.markers) %>%
+          gather(key = "PC", value = "loading_L2", -gene)) %>%
+  ggplot(aes(x = loading_L1, y = loading_L2, color = gene)) +
+  geom_line() +
+  theme_bw()
+
+
+# correlate the loadings across PCs
+foo = gex.1hc.nd584@reductions$pca@feature.loadings %>%
+  as.data.frame %>%
+  rownames_to_column("gene") %>%
+  # filter(gene %in% jimmie.markers) %>%
+  gather(key = "PC", value = "loading_L1", -gene) %>%
+  mutate(loading_L1 = loading_L1) %>%
+  merge(gex.2hc.nd584@reductions$pca@feature.loadings %>%
+          as.data.frame %>%
+          rownames_to_column("gene") %>%
+          # filter(gene %in% jimmie.markers) %>%
+          gather(key = "PC", value = "loading_L2", -gene) %>%
+          mutate(loading_L2 = loading_L2)) %>%
+  group_by(PC) %>%
+  summarise(cor_loadings = cor(loading_L1, loading_L2)^2)
+
+
+
+# repeat for D1397
+# extract control hash cells for d1397 from lane 1
+gex.1hc.d1397 = subset(gex.12hc, sample=="D1397" & orig.ident=="L1")
+gex.2hc.d1397 = subset(gex.12hc, sample=="D1397" & orig.ident=="L2")
+
+# PCA for lane 1
+gex.1hc.d1397 <- SCTransform(gex.1hc.d1397, method = "glmGamPoi", vars.to.regress = "percent.mt")
+gex.1hc.d1397 <- RunPCA(gex.1hc.d1397, npcs=100)
+
+gex.1hc.d1397.marker_pcmax <- gex.1hc.d1397@reductions$pca@feature.loadings %>%
+  as.data.frame %>%
+  rownames_to_column("gene") %>%
+  filter(gene %in% jimmie.markers) %>%
+  column_to_rownames("gene") %>%
+  apply(., 1, function(x) max(abs(x)))
+
+
+# PCA for lane 2
+gex.2hc.d1397 <- SCTransform(gex.2hc.d1397, method = "glmGamPoi", vars.to.regress = "percent.mt")
+gex.2hc.d1397 <- RunPCA(gex.2hc.d1397, npcs=100)
+
+gex.2hc.d1397.marker_pcmax <- gex.2hc.d1397@reductions$pca@feature.loadings %>%
+  as.data.frame %>%
+  rownames_to_column("gene") %>%
+  filter(gene %in% jimmie.markers) %>%
+  column_to_rownames("gene") %>%
+  apply(., 1, function(x) max(abs(x)))
+
+# plot the genes
+enframe(gex.1hc.d1397.marker_pcmax, name = "gene", value = "max_pc_L1") %>%
+  merge(enframe(gex.2hc.d1397.marker_pcmax, name = "gene", value = "max_pc_L2")) %>%
+  ggplot(aes(x = max_pc_L1, y = max_pc_L2, label = gene)) +
+  geom_text_repel(max.overlaps = 100) +
+  geom_abline(intercept = 0, slope = 1, linetype = "dashed", color = "red") +
+  coord_fixed() +
+  theme_bw()
+
+foo = gex.1hc.d1397@reductions$pca@feature.loadings %>%
+  as.data.frame %>%
+  rownames_to_column("gene") %>%
+  filter(gene %in% jimmie.markers) %>%
+  gather(key = "PC", value = "loading_L1", -gene) %>%
+  mutate(loading_L1 = abs(loading_L1)) %>%
+  merge(gex.2hc.d1397@reductions$pca@feature.loadings %>%
+          as.data.frame %>%
+          rownames_to_column("gene") %>%
+          filter(gene %in% jimmie.markers) %>%
+          gather(key = "PC", value = "loading_L2", -gene) %>%
+          mutate(loading_L2 = abs(loading_L2))) %>%
+  group_by(PC) %>%
+  summarise(cor_loadings = cor(loading_L1, loading_L2))
+
+```
+
+
+Will you make similar inferences of DE between Ctrl and LPS for L1 and L2?
+
+```{r}
+
+# subset
+gex.1h.nd584 <- subset(gex.list[["L1"]], sample=="ND584" &
+                         tech=="hash" &
+                         nFeature_RNA > 200 & nFeature_RNA < 2500 & # filter out cells with low and high genes
+                         percent.mt < 10)
+gex.2h.nd584 <- subset(gex.list[["L2"]], sample=="ND584" &
+                         tech=="hash" &
+                         nFeature_RNA > 200 & nFeature_RNA < 2500 & # filter out cells with low and high genes
+                         percent.mt < 10)
+
+# normalize
+gex.1h.nd584 <- NormalizeData(gex.1h.nd584)
+gex.2h.nd584 <- NormalizeData(gex.2h.nd584)
+
+# differential expression
+Idents(gex.1h.nd584) <- "stim"
+Idents(gex.2h.nd584) <- "stim"
+
+gex.1h.nd584.de_lps <- FindMarkers(gex.1h.nd584,
+                            ident.1 = "LPS",
+                            ident.2 = "Ctrl",
+                            logfc.threshold = 0) %>%
+  rownames_to_column("gene")
+
+gex.2h.nd584.de_lps <- FindMarkers(gex.2h.nd584,
+                            ident.1 = "LPS",
+                            ident.2 = "Ctrl",
+                            logfc.threshold = 0) %>%
+  rownames_to_column("gene")
+
+gex.1h.nd584.gex <- apply(gex.1h.nd584@assays$RNA@counts, 1, mean)
+gex.2h.nd584.gex <- apply(gex.1h.nd584@assays$RNA@counts, 1, mean)
+gex.12h.nd584.gex <- data.frame(gene = names(gex.1h.nd584.gex),
+                                lane1_gex = gex.1h.nd584.gex) %>%
+  merge(data.frame(gene = names(gex.2h.nd584.gex),
+                   lane2_gex = gex.2h.nd584.gex)) %>%
+  mutate(mean_gex = (lane1_gex + lane2_gex)/2)
+
+
+gex.1h.nd584.de_lps %>%
+  select(gene, avg_log2FC_L1 = avg_log2FC, p_adj_L1 = p_val_adj) %>%
+  merge(gex.2h.nd584.de_lps %>%
+          select(gene, avg_log2FC_L2 = avg_log2FC, p_adj_L2 = p_val_adj)) %>%
+  merge(gex.12h.nd584.gex) %>%
+  mutate(num_sig = c("none","one","both")[(p_adj_L1 < 0.05) + (p_adj_L2 < 0.05) + 1]) %>%
+  ggplot(aes(x = avg_log2FC_L1, y = avg_log2FC_L2, color = log2(mean_gex))) +
+  geom_point() +
+  theme_bw() +
+  geom_abline(intercept = 0, slope = 1, linetype = "dashed", color = "red") +
+  coord_fixed() +
+  scale_color_distiller(palette = "Spectral") +
+  # scale_color_manual(values = c("red","gray","blue")) +
+  ggtitle("LPS vs Ctrl DE log2FC for L1 and L2 from ND584")
+
+
+# repeat for D1397
+# subset
+gex.1h.d1397 <- subset(gex.list[["L1"]], sample=="D1397" &
+                         tech=="hash" &
+                         nFeature_RNA > 200 & nFeature_RNA < 2500 & # filter out cells with low and high genes
+                         percent.mt < 10)
+gex.2h.d1397 <- subset(gex.list[["L2"]], sample=="D1397" &
+                         tech=="hash" &
+                         nFeature_RNA > 200 & nFeature_RNA < 2500 & # filter out cells with low and high genes
+                         percent.mt < 10)
+
+# normalize
+gex.1h.d1397 <- NormalizeData(gex.1h.d1397)
+gex.2h.d1397 <- NormalizeData(gex.2h.d1397)
+
+# differential expression
+Idents(gex.1h.d1397) <- "stim"
+Idents(gex.2h.d1397) <- "stim"
+
+gex.1h.d1397.de_lps <- FindMarkers(gex.1h.d1397,
+                            ident.1 = "LPS",
+                            ident.2 = "Ctrl",
+                            logfc.threshold = 0) %>%
+  rownames_to_column("gene")
+
+gex.2h.d1397.de_lps <- FindMarkers(gex.2h.d1397,
+                            ident.1 = "LPS",
+                            ident.2 = "Ctrl",
+                            logfc.threshold = 0) %>%
+  rownames_to_column("gene")
+
+gex.1h.d1397.gex <- apply(gex.1h.d1397@assays$RNA@counts, 1, mean)
+gex.2h.d1397.gex <- apply(gex.1h.d1397@assays$RNA@counts, 1, mean)
+gex.12h.d1397.gex <- data.frame(gene = names(gex.1h.d1397.gex),
+                                lane1_gex = gex.1h.d1397.gex) %>%
+  merge(data.frame(gene = names(gex.2h.d1397.gex),
+                   lane2_gex = gex.2h.d1397.gex)) %>%
+  mutate(mean_gex = (lane1_gex + lane2_gex)/2)
+
+gex.1h.d1397.de_lps %>%
+  select(gene, avg_log2FC_L1 = avg_log2FC) %>%
+  merge(gex.2h.nd584.de_lps %>%
+          select(gene, avg_log2FC_L2 = avg_log2FC)) %>%
+  merge(gex.12h.d1397.gex) %>%
+  ggplot(aes(x = avg_log2FC_L1, y = avg_log2FC_L2, color = log2(mean_gex))) +
+  geom_point() +
+  theme_bw() +
+  geom_abline(intercept = 0, slope = 1, linetype = "dashed", color = "red") +
+  scale_color_distiller(palette = "Spectral") +
+  ggtitle("LPS vs Ctrl DE log2FC for L1 and L2 from D1397")
+
+
+# correlation of effect sizes between samples depending on lane
+gex.1h.d1397.de_lps %>%
+  select(gene, avg_log2FC_d1397 = avg_log2FC) %>%
+  merge(gex.1h.nd584.de_lps %>%
+          select(gene, avg_log2FC_nd584 = avg_log2FC)) %>%
+  ggplot(aes(x = avg_log2FC_nd584, y = avg_log2FC_d1397, color = mean_gex)) +
+  geom_point() +
+  theme_bw() +
+  geom_abline(intercept = 0, slope = 1, linetype = "dashed", color = "red") +
+  scale_color_distiller(palette = "Spectral") +
+  ggtitle("LPS vs Ctrl DE log2FC for d1397 and ND584 from L1")
+
+gex.2h.d1397.de_lps %>%
+  select(gene, avg_log2FC_d1397 = avg_log2FC) %>%
+  merge(gex.2h.nd584.de_lps %>%
+          select(gene, avg_log2FC_nd584 = avg_log2FC)) %>%
+  ggplot(aes(x = avg_log2FC_nd584, y = avg_log2FC_d1397)) +
+  geom_point() +
+  theme_bw() +
+  geom_abline(intercept = 0, slope = 1, linetype = "dashed", color = "red") +
+  ggtitle("LPS vs Ctrl DE log2FC for d1397 and ND584 from L2")
+
+
+# cluster
+gex.1h.d1397 <- SCTransform(gex.1h.d1397, method = "glmGamPoi", vars.to.regress = "percent.mt")
+gex.1h.d1397 <- RunPCA(gex.1h.d1397, npcs=100)
+
+gex.1h.d1397 <- RunUMAP(gex.1h.d1397, dims = 1:30)
+
+DimPlot(gex.1h.d1397, reduction = "umap", group.by = "stim")
+
+foo <- names(sort(gex.1h.d1397@reductions$pca@feature.loadings[,1]))
+
+bar <- gost(query = foo, custom_bg = foo, ordered_query = T)
+
+```
+
+
+Fang wants to know about expression of ISG15 in ND584
+
+```{r}
+
+# expression of ISG15 in Ctrl vs PolyI:c
+
+# ND584
+Idents(gex.12h.nd584) <- "stim"
+
+VlnPlot(gex.12h.nd584, "ISG15")
+
+gex.12h.nd584.de_polyic <- FindMarkers(gex.12h.nd584, ident.1 = "PolyIc", ident.2 = "Ctrl", logfc.threshold = 0) %>%
+  rownames_to_column("gene")
+gex.12h.nd584.de_lps <- FindMarkers(gex.12h.nd584, ident.1 = "LPS", ident.2 = "Ctrl", logfc.threshold = 0) %>%
+  rownames_to_column("gene")
+
+gex.12h.nd584.de_polyic %>%
+  select(gene, polyic_log2FC = avg_log2FC) %>%
+  merge(gex.12h.nd584.de_lps %>%
+          select(gene, lps_log2FC = avg_log2FC)) %>%
+  ggplot(aes(x = lps_log2FC, y = polyic_log2FC)) +
+  geom_point() +
+  geom_abline(intercept = 0, slope = 1, linetype = "dashed", color = "red") +
+  theme_bw() +
+  ggtitle("LPS vs. Control and PolyI:C vs. Control in ND584")
+
+
+gex.12h.nd584.de_polyic.go = gost()
+
+
+# D1397
+Idents(gex.12h.d1397) <- "stim"
+
+VlnPlot(gex.12h.d1397, "ISG15")
+
+gex.12h.d1397.de_polyic <- FindMarkers(gex.12h.d1397, ident.1 = "PolyIc", ident.2 = "Ctrl", logfc.threshold = 0) %>%
+  rownames_to_column("gene")
+gex.12h.d1397.de_lps <- FindMarkers(gex.12h.d1397, ident.1 = "LPS", ident.2 = "Ctrl", logfc.threshold = 0) %>%
+  rownames_to_column("gene")
+
+gex.12h.d1397.de_polyic %>%
+  select(gene, polyic_log2FC = avg_log2FC) %>%
+  merge(gex.12h.d1397.de_lps %>%
+          select(gene, lps_log2FC = avg_log2FC)) %>%
+  ggplot(aes(x = lps_log2FC, y = polyic_log2FC)) +
+  geom_point() +
+  geom_abline(intercept = 0, slope = 1, linetype = "dashed", color = "red") +
+  theme_bw() +
+  ggtitle("LPS vs. Control and PolyI:C vs. Control in D1397")
+
+```
+
+
+Cluster Ctrl and PolyIC cells in ND584 and D1397
+
+```{r}
+
+gex.12hcp.nd584 <- SCTransform(gex.12hcp.nd584, method = "glmGamPoi", vars.to.regress = "percent.mt")
+gex.12hcp.nd584 <- RunPCA(gex.12hcp.nd584, npcs = 100)
+
+gex.12hcp.nd584 <- RunUMAP(gex.12hcp.nd584, dims = 1:30)
+
+DimPlot(gex.12hcp.nd584, reduction = "umap", group.by = "stim")
+
+```
+
+
+Compare clustering and ADT marker expression in CITE-seq data between L1 and L2
+
+```{r}
+
+gex.12c <- Reduce(merge,
+                  lapply(gex.list[c("L1", "L2")], # select cells from lanes 1 and 2
+                         function(x) subset(x, HTO_classification.global=="Singlet" & # select singlet cells
+                                              tech=="cite" & # select CITE-seq cells
+                                              percent.mt < 10))) # filter based on mitochondrial reads
+
+gex.12c <- SCTransform(gex.12c, method = "glmGamPoi", vars.to.regress = "percent.mt")
+gex.12c <- RunPCA(gex.12c, npcs = 100)
+
+gex.12c <- RunUMAP(gex.12c, dims = 1:30)
+
+DimPlot(gex.12c, reduction = "umap", group.by = "stim")
+
+DefaultAssay(gex.12c) <- "ADT"
+
+gex.12c <- NormalizeData(gex.12c, normalization.method = "CLR", margin = 2, assay = "ADT")
+
+FeaturePlot(gex.12c, features = "CD4", split.by = "orig.ident")
+
+Idents(gex.12c) <- "orig.ident"
+VlnPlot(gex.12c, "CD4")
+
+```
+
+
+Compare the effect of LPS in CITE-seq and hashing data
+
+```{r}
+
+gex.12c.d1397 <- Reduce(merge,
+                        lapply(gex.list[c("L1", "L2")], # select cells from lanes 1 and 2
+                               function(x) subset(x, HTO_classification.global=="Singlet" & # select singlet cells
+                                                    sample=="D1397" & # select D1397
+                                                    tech=="cite"  & # select hashing data
+                                                    nFeature_RNA > 200 & nFeature_RNA < 2500 & # filter out cells with low and high genes
+                                                    percent.mt < 10))) # filter based on mitochondrial reads
+
+gex.12c.d1397 <- NormalizeData(gex.12c.d1397)
+
+Idents(gex.12c.d1397) <- "stim"
+gex.12c.d1397.de_lps <- FindMarkers(gex.12c.d1397, ident.1 = "LPS", ident.2 = "Ctrl", logfc.threshold = 0) %>%
+  rownames_to_column("gene")
+
+gex.12h.d1397.de_lps %>%
+  select(gene, avg_log2FC_hash = avg_log2FC, p_adj_hash = p_val_adj) %>%
+  merge(gex.12c.d1397.de_lps %>%
+          select(gene, avg_log2FC_cite = avg_log2FC, p_adj_cite = p_val_adj)) %>%
+  ggplot(aes(x = avg_log2FC_hash, y = avg_log2FC_cite)) +
+  geom_point() +
+  theme_bw() +
+  coord_fixed() +
+  geom_abline(intercept = 0, slope = 1, linetype = "dashed", color = "red") +
+  ggtitle("LPS vs Ctrl DE log2FC for CITE-seq and hashing from D1397")
+
+```
+
+
+Are ND584 and D1397 a different sex?
+
+```{r}
+
+# first need to get X-chromosome genes
+xchr_genes <- read_tsv("../../genomes/gencode.v19.annotation.gtf.gz",
+                       skip = 5,
+                       col_names = c("chr","source","type","start","end","foo","strand","bar","info")) %>%
+  filter(chr=="chrX" & type=="gene") %>%
+  mutate(gene_id = str_extract(info, "ENSG[:digit:]+"),
+         gene_name = str_extract(info, "(?<=gene_name \")[:alpha:]+")) %>%
+  select(gene_id, gene_name)
+
+# calculate the median counts
+gex.12h.nd584.mean = apply(gex.12h.nd584@assays$RNA@counts, 1, mean)
+gex.12h.d1397.mean = apply(gex.12h.d1397@assays$RNA@counts, 1, mean)
+
+data.frame(gene_name = names(gex.12h.nd584.mean),
+           nd584_mean = gex.12h.nd584.mean,
+           d1397_mean = gex.12h.d1397.mean) %>%
+  ggplot(aes(x = log2(nd584_mean / d1397_mean), color = gene_name %in% xchr_genes$gene_name)) +
+  stat_ecdf() +
+  theme_classic()
+
+```
+
+
+
+
+
+
+
+
+
+
+Oddly I'm finding that all cells have antibody tags, though only a fraction are 
+CITE-seq data. Do 'hash'-only cells have fewer antibody tags?
+
+```{r}
+
+gex.singlet <- gex.list[["L1"]]
+
+sum(rowSums(gex.singlet@assays$ADT[,gex.singlet$tech=="hash"]))
+sum(rowSums(gex.singlet@assays$ADT[,gex.singlet$tech=="cite"]))
+
+```
+
+
+I do see more ADT tags in the CITE-seq samples, I'm going to proceed with 
+clustering and downstream analyses and see if I run into problems. First will 
+be for lane 1, just to see what comes out
+
+```{r}
+
+# UMAP on all data together
+gex.singlet <- SCTransform(gex.singlet, method = "glmGamPoi", vars.to.regress = "percent.mt")
+gex.singlet <- RunPCA(gex.singlet, npcs=100)
+
+ElbowPlot(gex.singlet, ndims = 50)
+
+gex.singlet <- RunUMAP(gex.singlet, dims = 1:30)
+
+DimPlot(gex.singlet, reduction = "pca", group.by = "tech")
+
+DimPlot(gex.singlet, reduction = "umap", split.by = "tech", group.by = "sample")
+DimPlot(gex.singlet, reduction = "umap", split.by = "tech", group.by = "stim")
+DimPlot(gex.singlet, reduction = "umap", split.by = "sample", group.by = "tech")
+
+
+# cluster
+gex.singlet <- FindNeighbors(gex.singlet, dims = 1:30)
+gex.singlet <- FindClusters(gex.singlet, resolution = 0.5)
+
+# heatmap of jimmie's marker genes
+gex.singlet <- 
+DoHeatmap(gex.singlet, features = jimmie.markers)
+
+
+# identify monocyte cluster
+DefaultAssay(gex.singlet) <- "ADT"
+gex.singlet <- NormalizeData(gex.singlet, normalization.method = "CLR", margin = 2)
+
+FeaturePlot(gex.singlet, "CD14-CAATCAGACCTATGA") + ggtitle("CD14 protein")
+
+DefaultAssay(gex.singlet) <- "SCT"
+FeaturePlot(gex.singlet, "CD14") + ggtitle("CD14")
+
+```
+
+
+Analysis of Hash only from L1
+
+```{r}
+
+# try UMAP on hash only
+Idents(gex.singlet) <- "tech"
+gex.hash <- subset(gex.singlet, idents = "hash")
+
+gex.hash <- SCTransform(gex.hash, method = "glmGamPoi", vars.to.regress = "percent.mt")
+gex.hash <- RunPCA(gex.hash, npcs=100)
+
+ElbowPlot(gex.hash, ndims = 50)
+
+gex.hash <- RunUMAP(gex.hash, dims = 1:30)
+
+DimPlot(gex.hash, reduction = "umap", split.by = "sample", group.by = "stim")
+DimPlot(gex.hash, reduction = "umap", split.by = "stim", group.by = "sample")
+
+```
+
+
+Merge L1 and L2
+
+```{r}
+
+gex.l1l2 <- merge(gex.list[["L1"]], y = gex.list[["L2"]], add.cell.ids = c("L1", "L2"), project = "tk_p5")
+
+gex.l1l2$sample_tech = paste(gex.l1l2$sample, gex.l1l2$tech, sep="-")
+
+# compare the MT rate and read counts per cell between D1397 CITE-seq, D1397 
+# hash, and ND584 hash
+gex.l1l2.qual <- rbind(data.frame(sample_tech = gex.l1l2$sample_tech,
+                                  lane = gex.l1l2$lane,
+                                  measure = "log10_nCount_RNA",
+                                  val = log10(gex.l1l2$nCount_RNA)),
+                       data.frame(sample_tech = gex.l1l2$sample_tech,
+                                  lane = gex.l1l2$lane,
+                                  measure = "log10_nFeature_RNA",
+                                  val = log10(gex.l1l2$nFeature_RNA)),
+                       data.frame(sample_tech = gex.l1l2$sample_tech,
+                                  lane = gex.l1l2$lane,
+                                  measure = "log10_nCount_HTO",
+                                  val = log10(gex.l1l2$nCount_HTO)),
+                       data.frame(sample_tech = gex.l1l2$sample_tech,
+                                  lane = gex.l1l2$lane,
+                                  measure = "log10_nCount_ADT",
+                                  val = log10(gex.l1l2$nCount_ADT)),
+                       data.frame(sample_tech = gex.l1l2$sample_tech,
+                                  lane = gex.l1l2$lane,
+                                  measure = "log10_percent.mt",
+                                  val = log10(gex.l1l2$percent.mt)))
+
+gex.l1l2.qual %>%
+  ggplot(aes(x = val, color = sample_tech)) +
+  stat_ecdf() +
+  theme_classic() +
+  facet_wrap(~ measure, scales = "free")
+
+gex.l1l2.qual %>%
+  ggplot(aes(x = val, color = sample_tech)) +
+  stat_ecdf() +
+  theme_classic() +
+  facet_wrap(~ measure, scales = "free")
+
+Idents(gex.singlet) <- "stim"
+
+gex.l1l2 <- SCTransform(gex.l1l2, method = "glmGamPoi", vars.to.regress = "percent.mt")
+gex.l1l2 <- RunPCA(gex.l1l2, npcs=100)
+
+ElbowPlot(gex.l1l2, ndims = 50)
+
+gex.l1l2 <- RunUMAP(gex.l1l2, dims = 1:30)
+
+DimPlot(gex.l1l2, reduction = "umap", split.by = "lane", group.by = "sample_tech")
+DimPlot(gex.l1l2, reduction = "umap", split.by = "stim", group.by = "lane", shuffle = T)
+DimPlot(gex.l1l2, reduction = "umap", split.by = "sample_tech", group.by = "stim")
+
+DefaultAssay(gex.l1l2) <- "ADT"
+
+FeaturePlot(gex.l1l2, "CD14-CAATCAGACCTATGA") + ggtitle("CD14 protein")
+
+```
+
+
+Cluster Ctrl data L1 and L2
+
+```{r}
+
+Idents(gex.l1l2) <- "stim"
+gex.l1l2.ctrl <- subset(gex.l1l2, idents = "Ctrl")
+
+DefaultAssay(gex.l1l2.ctrl) <- "RNA"
+
+gex.l1l2.ctrl <- SCTransform(gex.l1l2.ctrl, method = "glmGamPoi", vars.to.regress = "percent.mt")
+gex.l1l2.ctrl <- RunPCA(gex.l1l2.ctrl, npcs=100)
+
+ElbowPlot(gex.l1l2.ctrl, ndims = 50)
+
+gex.l1l2.ctrl <- FindNeighbors(gex.l1l2.ctrl, dims = 1:30)
+gex.l1l2.ctrl <- FindClusters(gex.l1l2.ctrl, resolution = 0.8, verbose = FALSE)
+
+gex.l1l2.ctrl <- RunUMAP(gex.l1l2.ctrl, dims = 1:30)
+
+DimPlot(gex.l1l2.ctrl, reduction = "umap", group.by = "sample_tech")
+DimPlot(gex.l1l2.ctrl, reduction = "umap", split.by = "stim", group.by = "lane", shuffle = T)
+DimPlot(gex.l1l2.ctrl, reduction = "umap", split.by = "sample_tech", group.by = "stim")
+
+# plot surface marker genes
+DefaultAssay(gex.l1l2.ctrl) <- "ADT"
+gex.l1l2.ctrl <- NormalizeData(gex.l1l2.ctrl, normalization.method = "CLR", margin = 2)
+
+FeaturePlot(gex.l1l2.ctrl, "CD19-CTGGGCAATTACTCG")
+
+VlnPlot(gex.l1l2.ctrl, "CD19-CTGGGCAATTACTCG")
+
+
+# heatmap of markers
+DefaultAssay(gex.l1l2.ctrl) <- "SCT"
+DoHeatmap(gex.l1l2.ctrl, features = jimmie.markers)
+
+```
+
+Try analysis on CITE-seq data from L1 and L2
+
+```{r}
+
+# try UMAP on CITE-seq only
+gex.cite <- Reduce(merge,
+                   lapply(gex.list[c("L1", "L2")], # select cells from lanes 1 and 2
+                          function(x) subset(x, HTO_classification.global=="Singlet" & # select singlet cells
+                                               tech=="cite" & # select CITE-seq cells
+                                               nFeature_RNA > 200 & nFeature_RNA < 2500 & # filter out cells with low and high genes
+                                               percent.mt < 10))) # filter based on mitochondrial reads
+
+DefaultAssay(gex.cite) <- "RNA"
+
+gex.cite <- SCTransform(gex.cite, method = "glmGamPoi", vars.to.regress = "percent.mt")
+gex.cite <- RunPCA(gex.cite, npcs=100)
+
+ElbowPlot(gex.cite, ndims = 50)
+
+gex.cite <- RunUMAP(gex.cite, dims = 1:30)
+
+DimPlot(gex.cite, reduction = "umap", group.by = "stim")
+DimPlot(gex.cite, reduction = "umap", group.by = "lane")
+
+gex.cite <- FindNeighbors(gex.cite, dims = 1:30, verbose = FALSE)
+gex.cite <- FindClusters(gex.cite, verbose = FALSE)
+
+DefaultAssay(gex.cite) <- "ADT"
+
+gex.cite <- NormalizeData(gex.cite, normalization.method = "CLR", margin = 2)
+
+FeaturePlot(gex.cite, "CD14-CAATCAGACCTATGA") + ggtitle("CD14 protein")
+
+# try clustering on RNA + ADT makers by WNN. Adapted from https://satijalab.org/seurat/articles/weighted_nearest_neighbor_analysis.html
+DefaultAssay(gex.cite) <- 'RNA'
+gex.cite <- NormalizeData(gex.cite) %>% FindVariableFeatures() %>% ScaleData() %>% RunPCA()
+
+DefaultAssay(gex.cite) <- 'ADT'
+# we will use all ADT features for dimensional reduction
+# we set a dimensional reduction name to avoid overwriting the 
+VariableFeatures(gex.cite) <- rownames(gex.cite[["ADT"]])
+gex.cite <- NormalizeData(gex.cite, normalization.method = 'CLR', margin = 2) %>% 
+  ScaleData() %>% RunPCA(reduction.name = 'apca')
+
+gex.cite <- FindMultiModalNeighbors(
+  gex.cite, reduction.list = list("pca", "apca"), 
+  dims.list = list(1:30, 1:7), modality.weight.name = "RNA.weight"
+)
+
+gex.cite <- RunUMAP(gex.cite, assay = "ADT", features = rownames(gex.cite))
+gex.cite <- FindClusters(gex.cite, graph.name = "wsnn", algorithm = 3, resolution = 0.1, verbose = FALSE)
+
+DimPlot(gex.cite, reduction = "wnn.umap")
+
+```
+
+
+These results tell me I should think more about integrating the datasets due to 
+the effect of sequencing depth. I'm going to cluster only lane 1
+
+```{r}
+
+# try UMAP on CITE-seq only
+gex.l1.cite <- subset(gex.list[["L1"]], HTO_classification.global=="Singlet" & # select singlet cells
+                        tech=="cite" & # select CITE-seq cells
+                        nFeature_RNA > 200 & nFeature_RNA < 2500 & # filter out cells with low and high genes
+                        percent.mt < 10) # filter based on mitochondrial reads
+
+DefaultAssay(gex.cite) <- "RNA"
+
+gex.l1.cite <- SCTransform(gex.l1.cite, method = "glmGamPoi", vars.to.regress = "percent.mt")
+gex.l1.cite <- RunPCA(gex.l1.cite, npcs=100)
+
+ElbowPlot(gex.l1.cite, ndims = 50)
+
+gex.l1.cite <- RunUMAP(gex.l1.cite, dims = 1:30)
+
+DimPlot(gex.l1.cite, reduction = "umap", group.by = "stim")
+DimPlot(gex.l1.cite, reduction = "umap", group.by = "lane")
+
+gex.l1.cite <- FindNeighbors(gex.l1.cite, dims = 1:30, verbose = FALSE)
+gex.l1.cite <- FindClusters(gex.l1.cite, verbose = FALSE)
+
+DimPlot(gex.l1.cite, reduction = "umap")
+DoHeatmap(gex.l1.cite, features = jimmie.markers)
+
+DefaultAssay(gex.l1.cite) <- "ADT"
+
+gex.l1.cite <- NormalizeData(gex.l1.cite, normalization.method = "CLR", margin = 2)
+
+FeaturePlot(gex.l1.cite, "CD14-CAATCAGACCTATGA") + ggtitle("CD14 protein")
+
+# try clustering on RNA + ADT makers by WNN. Adapted from https://satijalab.org/seurat/articles/weighted_nearest_neighbor_analysis.html
+DefaultAssay(gex.l1.cite) <- 'RNA'
+gex.l1.cite <- NormalizeData(gex.l1.cite) %>% FindVariableFeatures() %>% ScaleData() %>% RunPCA()
+
+DefaultAssay(gex.l1.cite) <- 'ADT'
+# we will use all ADT features for dimensional reduction
+# we set a dimensional reduction name to avoid overwriting the 
+VariableFeatures(gex.l1.cite) <- rownames(gex.l1.cite[["ADT"]])
+gex.l1.cite <- NormalizeData(gex.l1.cite, normalization.method = 'CLR', margin = 2) %>% 
+  ScaleData() %>% RunPCA(reduction.name = 'apca')
+
+gex.l1.cite <- FindMultiModalNeighbors(
+  gex.l1.cite, reduction.list = list("pca", "apca"), 
+  dims.list = list(1:30, 1:7), modality.weight.name = "RNA.weight"
+)
+
+gex.l1.cite <- RunUMAP(gex.l1.cite, nn.name = "weighted.nn", reduction.name = "wnn.umap", reduction.key = "wnnUMAP_")
+gex.l1.cite <- FindClusters(gex.l1.cite, graph.name = "wsnn", algorithm = 3, resolution = 0.1, verbose = FALSE)
+
+# run UMAP on ADT data
+DefaultAssay(gex.l1.cite) <- "ADT"
+gex.l1.cite <- RunUMAP(gex.l1.cite, dims = 1:7, reduction.name = "adt.umap", reduction.key = "adtUMAP_")
+
+gex.l1.cite[["adt_snn"]] <- FindNeighbors(adt.dist)$snn
+gex.l1.cite <- FindClusters(cbmc, resolution = 0.2, graph.name = "adt_snn")
+
+DimPlot(gex.l1.cite, reduction = "adt.umap")
+
+```
+
+Try analysis on hash data from L1 and L2
+
+```{r}
+
+# try UMAP on CITE-seq only
+Idents(gex.l1l2) <- "tech"
+gex.cite <- subset(gex.l1l2, idents = "cite")
+
+gex.cite <- SCTransform(gex.cite, method = "glmGamPoi", vars.to.regress = "percent.mt")
+gex.cite <- RunPCA(gex.cite, npcs=100)
+
+ElbowPlot(gex.cite, ndims = 50)
+
+gex.cite <- RunUMAP(gex.cite, dims = 1:30)
+
+DimPlot(gex.cite, reduction = "umap", group.by = "stim")
+DimPlot(gex.cite, reduction = "umap", group.by = "lane")
+
+gex.cite <- FindNeighbors(gex.cite, dims = 1:30, verbose = FALSE)
+gex.cite <- FindClusters(gex.cite, verbose = FALSE)
+
+DefaultAssay(gex.cite) <- "ADT"
+
+gex.cite <- NormalizeData(gex.cite, normalization.method = "CLR", margin = 2)
+
+FeaturePlot(gex.cite, "CD14-CAATCAGACCTATGA") + ggtitle("CD14 protein")
+
+
+```
+
+
+Let's restrict ourselves to the African sample and see if:
+1. CITE-seq and hash cells cluster together
+2. L1 and L2 cluster together
+
+```{r}
+
+Idents(gex.l1l2) <- "sample"
+gex.l1l2.d1397 <- subset(gex.l1l2, idents = "D1397")
+
+gex.l1l2.d1397 <- SCTransform(gex.l1l2.d1397, method = "glmGamPoi", vars.to.regress = "percent.mt")
+gex.l1l2.d1397 <- RunPCA(gex.l1l2.d1397, npcs=100)
+
+ElbowPlot(gex.l1l2.d1397, ndims = 50)
+
+gex.l1l2.d1397 <- RunUMAP(gex.l1l2.d1397, dims = 1:30)
+
+gex.l1l2.d1397 <- FindNeighbors(gex.l1l2.d1397, dims = 1:30, verbose = FALSE)
+gex.l1l2.d1397 <- FindClusters(gex.l1l2.d1397, verbose = FALSE, resolution = 0.1)
+
+DimPlot(gex.l1l2.d1397, reduction = "umap", split.by = "lane", group.by = "stim")
+DimPlot(gex.l1l2.d1397, reduction = "umap", split.by = "lane", group.by = "tech")
+
+# heatmap of jimmie's marker genes
+DimPlot(gex.l1l2.d1397, reduction = "umap")
+DoHeatmap(gex.l1l2.d1397, features = jimmie.markers)
+
+DimPlot(gex.l1l2.d1397, reduction = "umap", group.by = "stim")
+
+# do we find similar DE genes by lane?
+DefaultAssay(gex.l1l2.d1397) <- "RNA"
+Idents(gex.l1l2.d1397) <- "lane"
+gex.d1397.l1 <- subset(gex.l1l2.d1397, idents = "L1")
+Idents(gex.d1397.l1) <- "stim"
+de_genes.nd584.l1 <- FindMarkers(gex.d1397.l1, ident.1 = "Ctrl", ident.2 = "LPS")  %>%
+  rownames_to_column("gene")
+
+gex.d1397.l2 <- subset(gex.l1l2.d1397, idents = "L2")
+Idents(gex.d1397.l2) <- "stim"
+de_genes.nd584.l2 <- FindMarkers(gex.d1397.l2, ident.1 = "Ctrl", ident.2 = "LPS")  %>%
+  rownames_to_column("gene")
+
+gex.d1397.l1l2 = de_genes.nd584.l1 %>%
+  select(gene, L1 = avg_log2FC) %>%
+  merge(de_genes.nd584.l2 %>%
+          select(gene, L2 = avg_log2FC))
+
+gex.d1397.l1l2$L1[is.infinite(gex.d1397.l1l2$L1)] = 400
+gex.d1397.l1l2$L2[is.infinite(gex.d1397.l1l2$L2)] = 400
+
+gex.d1397.l1l2 %>%
+  ggplot(aes(x=L1, y=L2)) +
+  geom_point() +
+  theme_classic()
+
+```
+
+
+Now, combine ND584 samples across lanes
+
+```{r}
+
+Idents(gex.list[["L1"]]) <- "sample"
+Idents(gex.list[["L2"]]) <- "sample"
+Idents(gex.list[["L3"]]) <- "sample"
+
+gex.nd584 <- merge(subset(gex.list[["L1"]], idents = "ND584"),
+                   y = merge(subset(gex.list[["L2"]], idents = "ND584"),
+                             y = subset(gex.list[["L3"]], idents = "ND584"),
+                             add.cell.ids = c("L2", "L3")),
+                   add.cell.ids = c("_L1", ""))
+
+DefaultAssay(gex.nd584) <- "RNA"
+
+gex.nd584 <- SCTransform(gex.nd584, method = "glmGamPoi", vars.to.regress = "percent.mt")
+gex.nd584 <- RunPCA(gex.nd584, npcs=100)
+
+ElbowPlot(gex.nd584, ndims = 50)
+
+gex.nd584 <- RunUMAP(gex.nd584, dims = 1:30)
+
+gex.nd584 <- FindNeighbors(gex.nd584, dims = 1:30, verbose = FALSE)
+gex.nd584 <- FindClusters(gex.nd584, verbose = FALSE)
+
+DimPlot(gex.nd584, reduction = "umap", split.by = "lane", group.by = "stim")
+
+# cluster
+gex.nd584 <- FindNeighbors(gex.nd584, dims = 1:30)
+gex.nd584 <- FindClusters(gex.nd584, resolution = 0.1)
+
+# heatmap of jimmie's marker genes
+DimPlot(gex.nd584, reduction = "umap")
+DoHeatmap(gex.nd584, features = jimmie.markers)
+
+```
+
+
+DE genes between ctrl and lps
+
+```{r}
+
+DefaultAssay(gex.nd584) <- "RNA"
+Idents(gex.nd584) <- "stim"
+
+de_genes.nd584 <- FindMarkers(gex.nd584, ident.1 = "Ctrl", ident.2 = "LPS")  %>%
+  rownames_to_column("gene")
+
+DefaultAssay(gex.l1l2.d1397) <- "RNA"
+Idents(gex.l1l2.d1397) <- "stim"
+
+de_genes.l1l2.d1397 <- FindMarkers(gex.l1l2.d1397, ident.1 = "Ctrl", ident.2 = "LPS") %>%
+  rownames_to_column("gene")
+
+
+# plot effect size
+lps_de.df <- de_genes.nd584 %>%
+  select(nd584_fc = avg_log2FC) %>%
+  rownames_to_column("gene") %>%
+  merge(de_genes.l1l2.d1397 %>%
+          select(d1397_fc = avg_log2FC) %>%
+          rownames_to_column("gene"))
+
+lps_de.df$nd584_fc[is.infinite(lps_de.df$nd584_fc)] = -300
+
+lps_de.df %>%
+  ggplot(aes(x=nd584_fc, y=d1397_fc)) +
+  geom_point() +
+  theme_classic()
+
+lps.nd584.go = gost(query = de_genes.nd584$gene[de_genes.nd584$p_val_adj < 0.05],
+                    custom_bg = de_genes.nd584$gene)
+
+lps.nd584.go = gost(query = de_genes.l1l2.d1397$gene[de_genes.l1l2.d1397$p_val_adj < 0.05],
+                    custom_bg = de_genes.l1l2.d1397$gene)
+
+
+```
+
+
