@@ -1,1 +1,1 @@
-# African_Immune_Cell_Atlas
+# African Immune Cell Atlas
